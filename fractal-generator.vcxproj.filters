@@ -21,10 +21,13 @@
     <ClInclude Include="src\Log.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\BitmapHeader.h">
+    <ClInclude Include="src\Bitmap.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\Bitmap.h">
+    <ClInclude Include="src\Timer.cpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BitmapHeader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
