@@ -10,5 +10,6 @@ Progress checklist:
 + Function Timer
 + Bitmap Images Generation
 
+<br/><br/>
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
 [Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/media/screenshots)   
