@@ -58,7 +58,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)bin</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src;$(SolutionDir)vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,7 +73,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)bin</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src;$(SolutionDir)vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -83,10 +83,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Application.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
