@@ -83,11 +83,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bitmap.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Bitmap.h" />
+    <ClInclude Include="src\BitmapHeader.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Application.h" />
   </ItemGroup>

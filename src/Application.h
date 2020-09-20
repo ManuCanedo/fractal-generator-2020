@@ -1,13 +1,14 @@
 #pragma once
-
-class Application
+namespace Fractal 
 {
-public:
-	Application();
-	~Application();
+	class Application
+	{
+	public:
+		Application();
+		~Application();
 
-	void Run();
-	static Application* CreateApplication();
-};
-
+		void Run();
+		static Application* CreateApplication();
+	};
+}
 

@@ -3,14 +3,13 @@
 
 int main()
 {
-	Log::Init();
-	LOG_WARN("Log Initialized");
-	LOG_INFO("System is working fine");
-	
+	Fractal::Log::Init();
+	LOG_TRACE("System Log initialized");
 
-	auto app = Application::CreateApplication();
+	auto app = Fractal::Application::CreateApplication();
 	app->Application::Run();
 
 	delete app;
+	LOG_WARN("Application quit");
 	return 0;
 }
