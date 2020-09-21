@@ -22,6 +22,8 @@ Core Progress checklist:
 
 Functionality Progress checklist:
 + Bitmap Images Generation
++ Mandelbrot Fractal Generation
++ Histogram Colouring
 
 ## Stay in touch
 

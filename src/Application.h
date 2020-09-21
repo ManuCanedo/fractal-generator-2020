@@ -4,8 +4,8 @@ namespace Fractal
 	class Application
 	{
 	public:
-		Application();
-		~Application();
+		Application() = default;
+		~Application() = default;
 
 		void Run();
 		static Application* CreateApplication();
