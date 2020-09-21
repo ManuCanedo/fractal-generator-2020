@@ -14,13 +14,13 @@ You can either clone the repository and build the project with GenerateProject.b
 
 ## Development progress
 
-Core Progress checklist:
+Engine Progress checklist:
 + Application Engine 
 + Log System
 + Function Timer
 + Premake project building
 
-Functionality Progress checklist:
+Application Progress checklist:
 + Bitmap Images Generation
 + Mandelbrot Fractal Generation
 + Histogram Colouring
