@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Application.h"
 #include "Log.h"
 
@@ -11,6 +13,8 @@ int main()
 
 	delete app;
 	LOG_TRACE("Resources freed");
-	LOG_TRACE("Application quit");
+
+	LOG_WARN("Execution finished\n\nPress ENTER to quit...");
+	std::cin.get();
 	return 0;
 }
