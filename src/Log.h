@@ -8,9 +8,6 @@ namespace Fractal
 	class Log
 	{
 	public:
-		Log() = default;
-		~Log() = default;
-
 		static void Init();
 		static inline std::shared_ptr<spdlog::logger>& GetLogger() { return s_Logger; }
 
