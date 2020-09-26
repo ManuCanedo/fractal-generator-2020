@@ -27,6 +27,8 @@ project "fractal-generator"
     includedirs
     {
         "vendor/spdlog/include",
+        "vendor/olcPixelEngine",
+        "src/",
     }
 
     filter "system:windows"

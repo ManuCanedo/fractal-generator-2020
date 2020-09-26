@@ -1,6 +1,7 @@
 # Directories
 .vs/
 bin-int/
+*_bak
 
 # Files
 *.user

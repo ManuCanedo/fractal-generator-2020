@@ -1,9 +1,11 @@
 #include <memory>
 #include <exception>
 
+#include "tools/Log.h"
+#include "tools/Timer.h"
+#include "tools/AllocationTracker.h"
+
 #include "Application.h"
-#include "Log.h"
-#include "Timer.cpp"
 #include "Bitmap.h"
 #include "Mandelbrot.h"
 

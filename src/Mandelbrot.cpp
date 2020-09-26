@@ -1,7 +1,10 @@
 #include <math.h>
+#include <complex>
+
+#include "tools/Timer.h"
+
 #include "Mandelbrot.h"
-#include "complex"
-#include "Timer.cpp"
+
 
 namespace Fractal
 {

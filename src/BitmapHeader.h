@@ -27,5 +27,4 @@ struct BitmapInfoHeader
 	int32_t importantColors{ 0 };
 };
 
-
 #pragma pack(pop)

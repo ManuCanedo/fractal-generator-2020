@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "Bitmap.h"
 
 namespace Fractal

@@ -1,7 +1,8 @@
 #include <fstream>
 #include <cstdint>
-#include "Log.h"
-#include "Timer.cpp"
+
+#include "tools/Log.h"
+#include "tools/Timer.h"
 
 #include "Bitmap.h"
 #include "BitmapHeader.h"
