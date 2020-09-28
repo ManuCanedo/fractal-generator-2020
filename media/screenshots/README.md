@@ -1,5 +1,9 @@
 # Screenshots
 
+29_09: Picture of a zoom into one of the branches of the fractal.   
+
+![Fractal](09_29_FractalZoom.jpg) 
+
 21_09: Project build through PREMAKE has been implemented. We are also generating our first fractals images!   
 
 ![Fractal](09_21_GeneratingFirstFractals.jpg)  
