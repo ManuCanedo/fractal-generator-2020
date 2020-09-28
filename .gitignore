@@ -9,3 +9,5 @@ bin-int/
 *.sln
 *.vcxproj
 *.vcxproj.user
+*.vcxproj.filters
+*.sln
