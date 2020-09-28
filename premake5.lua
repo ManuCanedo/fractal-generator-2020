@@ -18,6 +18,9 @@ project "fractal-generator"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "fpch.h"
+    pchsource "src/fpch.cpp"
+
     files
     {
         "src/**.h",

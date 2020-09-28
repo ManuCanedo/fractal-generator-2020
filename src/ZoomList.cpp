@@ -1,3 +1,6 @@
+// Precompiled header
+#include "fpch.h"
+
 #include "ZoomList.h"
 
 namespace Fractal

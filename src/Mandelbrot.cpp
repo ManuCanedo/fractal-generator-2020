@@ -1,5 +1,5 @@
-#include <math.h>
-#include <complex>
+// Precompiled header
+#include "fpch.h"
 
 #include "tools/Timer.h"
 
@@ -16,8 +16,11 @@ namespace Fractal
 
 		while (iterations < MAX_ITERATIONS)
 		{
-			z = z * z + c;
-			if (abs(z) > 2) break;
+			double z_r2{ z.real() * z.real() };
+			double z_i2{ z.imag() * z.imag() };
+			z = { z_r2 - z_i2 + c.real() , 2 * z.real() * z.imag() + c.imag() };
+
+			if ((z.real() * z.real() + z.imag() * z.imag()) > 4) break;
 			++iterations;
 		}
 

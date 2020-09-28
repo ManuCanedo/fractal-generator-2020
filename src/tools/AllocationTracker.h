@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 struct AllocationTracker
 {
 	uint32_t TotalAllocated{ 0 };

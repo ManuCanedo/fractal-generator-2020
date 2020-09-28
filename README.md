@@ -19,6 +19,7 @@ Engine Progress checklist:
 + Log System
 + Function Timer
 + Premake project building
++ Memory Allocations Tracker
 
 Application Progress checklist:
 + Bitmap Images Generation

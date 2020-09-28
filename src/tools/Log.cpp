@@ -1,4 +1,6 @@
-#include "Log.h"
+// Precompiled header
+#include "fpch.h"
+
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Fractal

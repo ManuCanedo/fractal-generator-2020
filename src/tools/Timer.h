@@ -1,8 +1,5 @@
 #pragma once
 
-#include <chrono>
-#include "Log.h"
-
 namespace Fractal
 {
 	class Timer

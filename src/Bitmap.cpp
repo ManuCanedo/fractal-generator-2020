@@ -1,7 +1,6 @@
-#include <fstream>
-#include <cstdint>
+// Precompiled header
+#include "fpch.h"
 
-#include "tools/Log.h"
 #include "tools/Timer.h"
 
 #include "Bitmap.h"

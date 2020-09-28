@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #pragma pack(push, 2)
 
 struct BitmapFileHeader
