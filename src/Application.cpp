@@ -7,6 +7,8 @@
 #include "Application.h"
 #include "Bitmap.h"
 #include "Mandelbrot.h"
+#include "ZoomList.h"
+
 
 namespace Fractal
 {
@@ -19,20 +21,16 @@ namespace Fractal
 		Bitmap image(WIDTH, HEIGHT);
 		LOG_TRACE("Bitmap created");
 
-		std::unique_ptr<int[]> pHistogram{ nullptr };
-		std::unique_ptr<int[]> pFractal{ nullptr };
-		try
-		{
-			pHistogram = std::make_unique<int[]>(Mandelbrot::MAX_ITERATIONS);
-			pFractal = std::make_unique<int[]>(WIDTH * HEIGHT);
-		}
-		catch (std::exception e)
-		{
-			LOG_ERROR("Error allocating memory for the fractal");
-		}
+		std::unique_ptr<int[]> pHistogram{ std::make_unique<int[]>(Mandelbrot::MAX_ITERATIONS) };
+		std::unique_ptr<int[]> pFractal{ std::make_unique<int[]>(WIDTH * HEIGHT) };
+
+		ZoomList zoomList(WIDTH, HEIGHT);
+		zoomList.Add(Zoom(WIDTH/2, HEIGHT/2, 4.0/WIDTH));
+		zoomList.Add(Zoom(295, HEIGHT - 202, 0.1));
+		zoomList.Add(Zoom(312, HEIGHT - 304, 0.1));
 
 		LOG_WARN("Generating Fractal");
-		Mandelbrot::GenerateFractalNaive(WIDTH, HEIGHT, pHistogram, pFractal);
+		Mandelbrot::GenerateFractalNaive(WIDTH, HEIGHT, zoomList, pHistogram, pFractal);
 		LOG_INFO("Fractal Generated");
 
 		LOG_WARN("Colouring Fractal");

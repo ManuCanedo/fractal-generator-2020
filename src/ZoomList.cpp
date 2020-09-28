@@ -12,18 +12,16 @@ namespace Fractal
 	{
 		m_Zooms.push_back(zoom);
 
-		m_xCenter += (static_cast<int64_t>(zoom.x) - m_Width / 2) * m_Scale;
-		m_yCenter += (static_cast<int64_t>(zoom.y) - m_Height / 2) * m_Scale;
+		m_xCenter += (zoom.x - m_Width / 2) * m_Scale;
+		m_yCenter += (zoom.y - m_Height / 2) * m_Scale;
 		m_Scale *= zoom.scale;
 	}
 
-	auto ZoomList::doZoom(int x, int y)
+	std::pair<double, double> ZoomList::doZoom(int x, int y)
 	{
-		struct DoubleCoordinates
-		{
-			double d_x{ 0 }, d_y{ 0 };
-		} pair;
+		double xFractal = (x - m_Width) * m_Scale + m_xCenter;
+		double yFractal = (y - m_Height) * m_Scale + m_yCenter;
 
-		return pair;
+		return { xFractal, yFractal };
 	}
 }
