@@ -9,9 +9,10 @@ namespace Fractal
 {
 	int Mandelbrot::GetIterations(double x, double y)
 	{
-		std::complex<double> z{ 0 };
-		std::complex<double> c{ x, y };
 		int iterations{ 0 };
+		/*std::complex<double> z{ 0 };
+		std::complex<double> c{ x, y };
+		
 
 		while (iterations < MAX_ITERATIONS)
 		{
@@ -22,35 +23,30 @@ namespace Fractal
 			if ((z.real() * z.real() + z.imag() * z.imag()) > 4) break;
 			++iterations;
 		}
-
+		*/
 		return iterations;
 	}
 
-	void Mandelbrot::GenerateFractalNaive(const int WIDTH, const int HEIGHT, ZoomList& zoomList, std::unique_ptr<int[]>& pHistogram, std::unique_ptr<int[]>& pFractal)
+	void Mandelbrot::GenerateFractalPrimitive(const int WIDTH, const int HEIGHT, ZoomList& zoomList, std::unique_ptr<int[]>& pHistogram, std::unique_ptr<int[]>& pFractal)
 	{
-		Timer timer;
+		/*Timer timer;
 
 		for (int j = 0; j < HEIGHT; ++j)
 			for (int i = 0; i < WIDTH; ++i)
 			{
-				//double xFractal{ (i - WIDTH / 2 - 200) * 2.0 / HEIGHT };
-				//double yFractal{ (j - HEIGHT / 2) * 2.0 / HEIGHT };
-
 				std::pair<double, double> coords = zoomList.doZoom(i, j);
 				int iterations{ Mandelbrot::GetIterations(coords.first, coords.second) };
-
-				//int iterations{ Mandelbrot::GetIterations(xFractal, yFractal) };
 
 				pFractal[static_cast<int64_t>(j) * WIDTH + i] = iterations;
 
 				if (iterations < Mandelbrot::MAX_ITERATIONS)
 					++pHistogram[iterations];
-			}
+			}*/
 	}
 
 	void Mandelbrot::ColorFractal(const int WIDTH, const int HEIGHT, Bitmap& image, std::unique_ptr<int[]>& pHistogram, std::unique_ptr<int[]>& pFractal)
 	{
-		Timer timer;
+		/*Timer timer;
 
 		int total{ 0 };
 		for (int i = 0; i < Mandelbrot::MAX_ITERATIONS; ++i)
@@ -76,6 +72,6 @@ namespace Fractal
 				}
 
 				image.SetPixel(i, j, red, green, blue);
-			}
+			}*/
 	}
 }

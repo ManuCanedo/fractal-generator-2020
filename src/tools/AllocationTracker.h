@@ -9,9 +9,7 @@ struct AllocationTracker
 	{
 		return TotalAllocated - TotalFreed;
 	}
-};
-
-static AllocationTracker s_AllocationTracker;
+} s_AllocationTracker;
 
 void* operator new(size_t size)
 {

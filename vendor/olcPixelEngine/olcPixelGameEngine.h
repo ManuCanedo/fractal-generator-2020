@@ -1091,8 +1091,8 @@ namespace olc
 
 	Pixel Sprite::Sample(float x, float y) const
 	{
-		int32_t sx = std::min((int32_t)((x * (float)width)), width - 1);
-		int32_t sy = std::min((int32_t)((y * (float)height)), height - 1);
+		int32_t sx = min((int32_t)((x * (float)width)), width - 1);
+		int32_t sy = min((int32_t)((y * (float)height)), height - 1);
 		return GetPixel(sx, sy);
 	}
 
@@ -1107,10 +1107,10 @@ namespace olc
 		float u_opposite = 1 - u_ratio;
 		float v_opposite = 1 - v_ratio;
 
-		olc::Pixel p1 = GetPixel(std::max(x, 0), std::max(y, 0));
-		olc::Pixel p2 = GetPixel(std::min(x + 1, (int)width - 1), std::max(y, 0));
-		olc::Pixel p3 = GetPixel(std::max(x, 0), std::min(y + 1, (int)height - 1));
-		olc::Pixel p4 = GetPixel(std::min(x + 1, (int)width - 1), std::min(y + 1, (int)height - 1));
+		olc::Pixel p1 = GetPixel(max(x, 0), max(y, 0));
+		olc::Pixel p2 = GetPixel(min(x + 1, (int)width - 1), max(y, 0));
+		olc::Pixel p3 = GetPixel(max(x, 0), min(y + 1, (int)height - 1));
+		olc::Pixel p4 = GetPixel(min(x + 1, (int)width - 1), min(y + 1, (int)height - 1));
 
 		return olc::Pixel(
 			(uint8_t)((p1.r * u_opposite + p2.r * u_ratio) * v_opposite + (p3.r * u_opposite + p4.r * u_ratio) * v_ratio),
@@ -2347,8 +2347,8 @@ namespace olc
 		{
 			if (c == '\n') { pos.y++;  pos.x = 0; }
 			else pos.x++;
-			size.x = std::max(size.x, pos.x);
-			size.y = std::max(size.y, pos.y);
+			size.x = max(size.x, pos.x);
+			size.y = max(size.y, pos.y);
 		}
 		return size * 8;
 	}
