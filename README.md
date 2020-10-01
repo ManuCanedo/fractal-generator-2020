@@ -20,11 +20,13 @@ Engine Progress checklist:
 + Function Timer
 + Premake project building
 + Memory Allocations Tracker
++ Precompiled headers
 
 Application Progress checklist:
 + Bitmap Images Generation
 + Mandelbrot Fractal Generation
 + Histogram Colouring
++ Applying static zooms
 
 ## Stay in touch
 
