@@ -65,16 +65,16 @@ namespace Fractal
 				olc::vd2d(fractTopLeft.x + fractalSectionWidth * static_cast<double>(i + 1), fractBottomRight.y),
 				m_Iterations);
 
-		//for (auto& f : m_Futures)
-		//	f.wait();
+		for (auto& f : m_Futures)
+			f.wait();
 
 		RenderFrame();
 
 		auto tp2 = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsedTime = tp2 - tp1;
 
-		//DrawString(0, 30, "Time: " + std::to_string(elapsedTime.count()) + "s", olc::WHITE, 3);
-		//DrawString(0, 60, "Iterations: " + std::to_string(m_Iterations), olc::WHITE, 3);
+		//DrawString(0, 30, "Time: " + std::to_string(elapsedTime.count()) + "s", olc::WHITE, 1);
+		//DrawString(0, 60, "Iterations: " + std::to_string(m_Iterations), olc::WHITE, 1);
 
 		return !(GetKey(olc::Key::ESCAPE).bPressed);
 	}
