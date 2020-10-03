@@ -1,4 +1,4 @@
-# Welcome to Fractal Generator
+# Welcome to the Fractal Generator
 
 This project is currently under development. The final result will be a real-time fractal explorer that will allow visualizing the time complexity of the algorithms most commonly used in computing.
 
