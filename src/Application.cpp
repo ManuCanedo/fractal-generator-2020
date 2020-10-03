@@ -4,6 +4,7 @@
 #include "tools/Timer.h"
 #include "tools/AllocationTracker.h"
 #include "Application.h"
+#include "Bitmap.h"
 
 using namespace olc;
 
@@ -33,22 +34,28 @@ namespace Fractal
 
 	bool Application::OnUserDestroy()
 	{
-		m_pFractal.reset(nullptr);
+		for (auto& f : m_Futures)
+			f.wait();
+
+		m_pFractal.reset();
 		return true;
 	}
 
 	bool Application::OnUserUpdate(float fElapsedTime)
 	{
+		using namespace std::chrono_literals;
+
 		olc::vi2d pixTopLeft = { 0,0 };
 		olc::vi2d pixBottomRight = { ScreenWidth(), ScreenHeight() };
 		olc::vd2d fractTopLeft = { -2.0, -1.0 };
 		olc::vd2d fractBottomRight = { 1.0, 1.0 };
 
-		// Get Pan and Zoom input
 		HandleInput(pixTopLeft, pixBottomRight, fractTopLeft, fractBottomRight);
 
 		int screenSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
 		double fractalSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / static_cast<double>(m_Threads) };
+
+		auto tp1 = std::chrono::high_resolution_clock::now();
 
 		for (size_t i = 0; i < m_Threads; i++)
 			m_Futures[i] = std::async(std::launch::async, &Application::GenerateFractalFrame, this,
@@ -58,95 +65,48 @@ namespace Fractal
 				olc::vd2d(fractTopLeft.x + fractalSectionWidth * static_cast<double>(i + 1), fractBottomRight.y),
 				m_Iterations);
 
-		for (auto& f : m_Futures)
-			f.wait();
+		//for (auto& f : m_Futures)
+		//	f.wait();
 
-		// Render frame
 		RenderFrame();
+
+		auto tp2 = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> elapsedTime = tp2 - tp1;
+
+		//DrawString(0, 30, "Time: " + std::to_string(elapsedTime.count()) + "s", olc::WHITE, 3);
+		//DrawString(0, 60, "Iterations: " + std::to_string(m_Iterations), olc::WHITE, 3);
 
 		return !(GetKey(olc::Key::ESCAPE).bPressed);
 	}
 
-	void Application::ScreenShot()
-	{
-		//LOG_TRACE("Application running");
-		//Bitmap image(WIDTH, HEIGHT);
-		//LOG_TRACE("Bitmap created");
-
-		//std::unique_ptr<int[]> pHistogram{ std::make_unique<int[]>(Mandelbrot::MAX_ITERATIONS) };
-		//std::unique_ptr<int[]> pFractal{ std::make_unique<int[]>(WIDTH * HEIGHT) };
-
-		//ZoomList zoomList(WIDTH, HEIGHT);
-		//zoomList.Add(Zoom(WIDTH / 2, HEIGHT / 2, 4.0 / WIDTH));
-		//zoomList.Add(Zoom(295, HEIGHT - 202, 0.1));
-		//zoomList.Add(Zoom(312, HEIGHT - 304, 0.1));
-
-		//LOG_WARN("Generating Fractal");
-		//Mandelbrot::GenerateFractalNaive(WIDTH, HEIGHT, zoomList, pHistogram, pFractal);
-		//LOG_INFO("Fractal Generated");
-
-		//LOG_WARN("Colouring Fractal");
-		//Mandelbrot::ColorFractal(WIDTH, HEIGHT, image, pHistogram, pFractal);
-		//LOG_INFO("Fractal Coloured");
-
-		//image.Write(name);
-		//LOG_INFO("Bitmap generation successful");
-		//LOG_TRACE("Bitmap saved as {0}", name);
-	}
-
-	void Application::HandleInput(olc::vi2d& pixTopLeft, olc::vi2d& pixBottomRight, olc::vd2d& fractTopLeft, olc::vd2d& fractBottomRight)
-	{
-		olc::vd2d mouseCoord = { static_cast<double>(GetMouseX()), static_cast<double>(GetMouseY()) };
-
-		if (GetMouse(2).bPressed)
-			m_StartPan = mouseCoord;
-		if (GetMouse(2).bHeld)
-		{
-			m_Offset -= (mouseCoord - m_StartPan) / m_Scale;
-			m_StartPan = mouseCoord;
-		}
-
-		olc::vd2d mouseCoordBeforeZoom;
-		ScreenToWorld(mouseCoord, mouseCoordBeforeZoom);
-
-		if (GetKey(olc::Key::UP).bHeld || GetMouseWheel() > 0) m_Scale *= 1.1;
-		if (GetKey(olc::Key::DOWN).bHeld || GetMouseWheel() < 0) m_Scale *= 0.9;
-		if (GetKey(olc::Key::RIGHT).bPressed) m_Iterations += 64;
-		if (GetKey(olc::Key::LEFT).bPressed && m_Iterations > 64) m_Iterations -= 64;
-
-		olc::vd2d mouseCoordAfterZoom;
-		ScreenToWorld(mouseCoord, mouseCoordAfterZoom);
-		m_Offset += (mouseCoordBeforeZoom - mouseCoordAfterZoom);
-
-		ScreenToWorld(pixTopLeft, fractTopLeft);
-		ScreenToWorld(pixBottomRight, fractBottomRight);
-	}
-
-	bool Application::GenerateFractalFrame(const olc::vi2d pixTopLeft, const olc::vi2d pixBottomRight, const olc::vd2d fractTopLeft, const olc::vd2d fractBottomRight, const int iterations)
+	bool Application::GenerateFractalFrame(const olc::vi2d pixTopLeft, const olc::vi2d pixBottomRight, const olc::vd2d fractTopLeft,
+		const olc::vd2d fractBottomRight, int iterations)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (double(pixBottomRight.x) - double(pixTopLeft.x)) };
 		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (double(pixBottomRight.y) - double(pixTopLeft.y)) };
-		
+
 		double xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
 		int rowSize{ ScreenWidth() }, yOffset{ 0 };
 
-		for (int y = pixTopLeft.y; y < pixBottomRight.y; y++)
+		for (int y = pixTopLeft.y; y < pixBottomRight.y; ++y)
 		{
 			xPos = fractTopLeft.x;
-			for (int x = pixTopLeft.x; x < pixBottomRight.x; x++)
+			for (int x = pixTopLeft.x; x < pixBottomRight.x; ++x)
 			{
 				std::complex<double> c{ xPos, yPos };
 				std::complex<double> z{ 0.0, 0.0 };
+				double zRe2{ z.real() * z.real() };
+				double zIm2{ z.imag() * z.imag() };
 				int n{ 0 };
 
-				while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iterations)
+				while (zRe2 + zIm2 < 4 && n < iterations)
 				{
-					z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
-						2 * z.real() * z.imag() + c.imag() };
+					z = { zRe2 - zIm2 + c.real(), 2 * z.real() * z.imag() + c.imag() };
+					zRe2 = z.real() * z.real();
+					zIm2 = z.imag() * z.imag();
 					++n;
 				}
-
-				m_pFractal[yOffset + x] = n;
+				m_pFractal[static_cast<int64_t>(x) + yOffset] = n;
 				xPos += xScale;
 			}
 
@@ -157,14 +117,81 @@ namespace Fractal
 		return true;
 	}
 
-	void Application::RenderFrame()
+	void Application::TakeScreenShot()
+	{
+		Timer timer;
+		static int index{ 0 };
+
+		LOG_TRACE("Taking Screenshot");
+		Bitmap image(ScreenWidth(), ScreenHeight());
+		LOG_TRACE("Bitmap created");
+
+		LOG_WARN("Colouring Image");
+		for (int y = 0; y < ScreenHeight(); ++y)
+			for (int x = 0; x < ScreenWidth(); ++x)
+			{
+				int i{ m_pFractal[y * ScreenWidth() + x] };
+
+				float n(i), a{ 0.1f };
+				uint8_t red(0), green(0), blue(0);
+
+				if (i != m_Iterations)
+				{
+					red = static_cast<uint8_t>(256 * static_cast<double>(0.5f * sin(a * n) + 0.5f));
+					green = static_cast<uint8_t>(256 * static_cast<double>(0.2f * sin(a * n + 2.094f) + 0.5f));
+					blue = static_cast<uint8_t>(256 * static_cast<double>(0.5f * sin(a * n + 4.188f) + 0.5f));
+				}
+				image.SetPixel(x, y, red, green, blue);
+			}
+
+		LOG_INFO("Image Coloured");
+
+		std::string fileName("Fractal_Screenshot_");
+		fileName.append(std::to_string(index++));
+		fileName.append(".bmp");
+
+		image.Write(fileName);
+		LOG_INFO("Bitmap generation successful");
+		LOG_TRACE("Bitmap saved as {0}", fileName);
+	}
+
+	inline void Application::HandleInput(olc::vi2d& pixTopLeft, olc::vi2d& pixBottomRight, olc::vd2d& fractTopLeft, olc::vd2d& fractBottomRight)
+	{
+		olc::vd2d mouseCoords = { static_cast<double>(GetMouseX()), static_cast<double>(GetMouseY()) };
+
+		if (GetMouse(2).bPressed)
+			m_StartPan = mouseCoords;
+
+		if (GetMouse(2).bHeld)
+		{
+			m_Offset -= (mouseCoords - m_StartPan) / m_Scale;
+			m_StartPan = mouseCoords;
+		}
+
+		olc::vd2d mouseCoordsBeforeZoom;
+		ScreenToWorld(mouseCoords, mouseCoordsBeforeZoom);
+
+		if (GetKey(olc::Key::SPACE).bPressed)						TakeScreenShot();
+		if (GetKey(olc::Key::UP).bHeld || GetMouseWheel() > 0)		m_Scale *= 1.1;
+		if (GetKey(olc::Key::DOWN).bHeld || GetMouseWheel() < 0)	m_Scale *= 0.9;
+		if (GetKey(olc::Key::RIGHT).bPressed)						m_Iterations += 64;
+		if (GetKey(olc::Key::LEFT).bPressed && m_Iterations > 64)	m_Iterations -= 64;
+
+		olc::vd2d mouseCoordsAfterZoom;
+		ScreenToWorld(mouseCoords, mouseCoordsAfterZoom);
+		m_Offset += (mouseCoordsBeforeZoom - mouseCoordsAfterZoom);
+
+		ScreenToWorld(pixTopLeft, fractTopLeft);
+		ScreenToWorld(pixBottomRight, fractBottomRight);
+	}
+
+	inline void Application::RenderFrame()
 	{
 		for (int y = 0; y < ScreenHeight(); y++)
 			for (int x = 0; x < ScreenWidth(); x++)
 			{
 				int i{ m_pFractal[static_cast<int64_t>(y) * ScreenWidth() + x] };
-				float n(i);
-				float a{ 0.1f };
+				float n(i), a{ 0.1f };
 
 				if (i == m_Iterations)
 					Draw(x, y, olc::BLACK);
@@ -173,22 +200,14 @@ namespace Fractal
 			}
 	}
 
-	// Convert coordinates from World Space --> Screen Space
-	void Application::WorldToScreen(const olc::vd2d& v, olc::vi2d& n)
-	{
-		n.x = static_cast<int>((v.x - m_Offset.x) * m_Scale.x);
-		n.y = static_cast<int>((v.y - m_Offset.y) * m_Scale.y);
-	}
-
-	// Convert coordinates from Screen Space --> World Space
-	void Application::ScreenToWorld(const olc::vi2d& n, olc::vd2d& v)
+	inline void Application::ScreenToWorld(const olc::vi2d& n, olc::vd2d& v)
 	{
 		v.x = static_cast<double>(n.x) / m_Scale.x + m_Offset.x;
 		v.y = static_cast<double>(n.y) / m_Scale.y + m_Offset.y;
 	}
 }
 
-// Entry Point
+
 int main()
 {
 	Fractal::Log::Init();

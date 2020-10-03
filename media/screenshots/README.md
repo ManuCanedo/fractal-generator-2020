@@ -1,5 +1,21 @@
 # Screenshots
 
+03_10: Fractal screenshots taken by the "Take Screenshot functionality".  
+
+![Fractal](10_03_Fractal_World_1.jpg)
+
+03_10: Fractal screenshots taken by the "Take Screenshot functionality".   
+
+![Fractal](10_03_Fractal_World_2.jpg)
+
+03_10: Fractal screenshots taken by the "Take Screenshot functionality". 
+
+![Fractal](10_03_Fractal_World_3.jpg)
+
+03_10: Fractal screenshots taken by the "Take Screenshot functionality".   
+
+![Fractal](10_03_Fractal_World_5.jpg)
+
 29_09: Picture of a zoom into one of the branches of the fractal.   
 
 ![Fractal](09_29_FractalZoom.jpg) 
