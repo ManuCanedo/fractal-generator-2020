@@ -10,6 +10,11 @@ workspace "fractal-generator"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["ImGui"] = "vendor/imgui"
+
+include "vendor/imgui"
+
 project "fractal-generator"
     location ""
     kind "ConsoleApp"
@@ -29,10 +34,25 @@ project "fractal-generator"
 
     includedirs
     {
+        "src",
         "vendor/spdlog/include",
+        "vendor/glfw/include",
         "vendor/olcPixelEngine",
-        "src/",
+        "%{IncludeDir.ImGui}"
     }
+
+    libdirs
+    {
+        "vendor/glfw/lib"
+	}
+
+    links
+    {
+        "ImGui",
+        "glfw3.lib",
+        "msvcrt.lib",
+        "msvcmrt.lib"
+	}
 
     filter "system:windows"
         cppdialect "C++17"

@@ -1,10 +1,12 @@
 // Precompiled header
 #include "fpch.h"
 
-#include "tools/Timer.h"
 #include "tools/AllocationTracker.h"
+
 #include "Application.h"
 #include "Bitmap.h"
+
+#include "GLFW/glfw3.h"
 
 using namespace olc;
 
@@ -29,6 +31,7 @@ namespace Fractal
 	{
 		m_pFractal = std::make_unique<int[]>(static_cast<int64_t>(ScreenHeight()) * ScreenWidth());
 		LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+
 		return true;
 	}
 
@@ -210,18 +213,53 @@ namespace Fractal
 
 int main()
 {
-	Fractal::Log::Init();
-	LOG_TRACE("System logger initialized");
+	//// TEST
+	GLFWwindow* window;
 
-	auto app = Fractal::Application::CreateHeapApplication();
-	LOG_INFO("Application Launched");
-	LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
-	if (app->Construct(1280, 720, 1, 1, false, false))
-		app->Start();
+	/* Initialize the library */
+	if (!glfwInit())
+		return -1;
 
-	Fractal::Application::DestroyHeapApplication(app);
-	LOG_TRACE("Resources freed");
-	LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+	/* Create a windowed mode window and its OpenGL context */
+	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	if (!window)
+	{
+		glfwTerminate();
+		return -1;
+	}
 
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window))
+	{
+		/* Render here */
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
 	return 0;
+	////
+
+	//Fractal::Log::Init();
+	//LOG_TRACE("System logger initialized");
+
+	//auto app = Fractal::Application::CreateHeapApplication();
+	//LOG_INFO("Application Launched");
+	//LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+	//if (app->Construct(1280, 720, 1, 1, false, false))
+	//	app->Start();
+
+	//Fractal::Application::DestroyHeapApplication(app);
+	//LOG_TRACE("Resources freed");
+	//LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+
+	//return 0;
 }

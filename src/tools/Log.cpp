@@ -1,8 +1,6 @@
 // Precompiled header
 #include "fpch.h"
 
-#include "spdlog/sinks/stdout_color_sinks.h"
-
 namespace Fractal
 {
 	std::shared_ptr<spdlog::logger> Log::s_Logger;

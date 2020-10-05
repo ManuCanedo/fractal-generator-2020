@@ -1,8 +1,6 @@
 // Precompiled header
 #include "fpch.h"
 
-#include "tools/Timer.h"
-
 #include "Bitmap.h"
 #include "BitmapHeader.h"
 

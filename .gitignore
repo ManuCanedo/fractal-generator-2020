@@ -1,6 +1,7 @@
 # Directories
 .vs/
 bin-int/
+media/
 *_bak
 
 # Files

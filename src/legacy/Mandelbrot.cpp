@@ -1,7 +1,6 @@
 // Precompiled header
 #include "fpch.h"
 
-#include "tools/Timer.h"
 #include "Mandelbrot.h"
 
 namespace Fractal

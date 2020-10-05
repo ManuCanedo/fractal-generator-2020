@@ -21,7 +21,7 @@ namespace Fractal
 	private:
 		bool GenerateFractalFrame(const olc::vi2d pixTopLeft, const olc::vi2d pixBottomRight,
 			const olc::vd2d fractTopLeft, const olc::vd2d fractBottomRight, int iterations);
-		
+
 		inline void RenderFrame();
 		inline void HandleInput(olc::vi2d& pixTopLeft, olc::vi2d& pixBottomRight,
 			olc::vd2d& fractTopLeft, olc::vd2d& fractBottomRight);

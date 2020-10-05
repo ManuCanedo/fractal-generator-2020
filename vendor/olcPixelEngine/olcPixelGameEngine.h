@@ -2718,7 +2718,7 @@ namespace olc
 #if defined(OLC_GFX_OPENGL10)
 	#if defined(_WIN32)
 	#include <windows.h>
-	#include <dwmapi.h>
+	#include <dwmapi.h>	
 	#include <GL/gl.h>
 	#pragma comment(lib, "Dwmapi.lib")
 	typedef BOOL(WINAPI wglSwapInterval_t) (int interval);
