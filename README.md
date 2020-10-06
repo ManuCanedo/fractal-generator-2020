@@ -4,7 +4,7 @@ This project is currently under development. The final result will be a real-tim
 
 A fractal is a psichodelic algorithm-generated image that is self-like through different scales. The user will be able to zoom in and out different regions of the fractal in order to explore it. It will also have different presets that will allow the user to visualize and compare the Time Complexity of some of the most popular computer science algorithms (e.g. binary search, euclidean algorithm, Huffman algorithm, Djiistra...).
 
-![Fractal](media/screenshots/10_03_Fractal_World_2.jpg)
+![Fractal](screenshots/10_03_Fractal_World_1.jpg)
 
 ## Getting Started
 
