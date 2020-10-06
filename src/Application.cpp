@@ -1,20 +1,15 @@
-// Precompiled header
 #include "fpch.h"
 
 #include "tools/AllocationTracker.h"
-
-#include "Application.h"
 #include "Bitmap.h"
-
-#include "GLFW/glfw3.h"
-
-using namespace olc;
+#include "Application.h"
 
 namespace Fractal
 {
 	Application::Application() : m_Futures(m_Threads)
 	{
-		sAppName = "Fractal Explorer";
+		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 	}
 
 	Application* Application::CreateHeapApplication()
@@ -27,10 +22,44 @@ namespace Fractal
 		delete app;
 	}
 
+	void Application::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) { return OnWindowClose(event); });
+		LOG_INFO("Event code {0}", event.ToString());
+	}
+
+	void Application::Run()
+	{
+		//while (!glfwWindowShouldClose(static_cast<WindowsWindow>(m_Window)->GetGLFWwindow()))
+		//{
+		//	render(window);
+
+		//	glfwSwapBuffers(window);
+		//	glfwPollEvents();
+		//}
+
+		while (m_Running)
+		{
+			Update();
+		}
+	}
+
+	void Application::Update()
+	{
+		glClearColor(1, 0, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		m_Window->OnUpdate();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool Application::OnUserCreate()
 	{
 		m_pFractal = std::make_unique<int[]>(static_cast<int64_t>(ScreenHeight()) * ScreenWidth());
-		LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+		LOG_WARN("Memory: {0}KB", s_AllocationTracker.CurrentUsage());
 
 		return true;
 	}
@@ -74,12 +103,18 @@ namespace Fractal
 		RenderFrame();
 
 		auto tp2 = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> elapsedTime = tp2 - tp1;
-
-		//DrawString(0, 30, "Time: " + std::to_string(elapsedTime.count()) + "s", olc::WHITE, 1);
-		//DrawString(0, 60, "Iterations: " + std::to_string(m_Iterations), olc::WHITE, 1);
+		auto elapsedTime = tp2 - tp1;
 
 		return !(GetKey(olc::Key::ESCAPE).bPressed);
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 
 	bool Application::GenerateFractalFrame(const olc::vi2d pixTopLeft, const olc::vi2d pixBottomRight, const olc::vd2d fractTopLeft,
@@ -98,8 +133,9 @@ namespace Fractal
 			{
 				std::complex<double> c{ xPos, yPos };
 				std::complex<double> z{ 0.0, 0.0 };
-				double zRe2{ z.real() * z.real() };
-				double zIm2{ z.imag() * z.imag() };
+
+				auto zRe2{ z.real() * z.real() };
+				auto zIm2{ z.imag() * z.imag() };
 				int n{ 0 };
 
 				while (zRe2 + zIm2 < 4 && n < iterations)
@@ -213,53 +249,22 @@ namespace Fractal
 
 int main()
 {
-	//// TEST
-	GLFWwindow* window;
-
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
-
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	if (!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
-
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
-	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
-	}
-
-	glfwTerminate();
-	return 0;
 	////
 
-	//Fractal::Log::Init();
-	//LOG_TRACE("System logger initialized");
+	Fractal::Log::Init();
+	LOG_TRACE("System logger initialized");
 
-	//auto app = Fractal::Application::CreateHeapApplication();
-	//LOG_INFO("Application Launched");
-	//LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+	LOG_INFO("Application Launched");
+	auto app = Fractal::Application::CreateHeapApplication();
+	LOG_WARN("Memory: {0}KB", s_AllocationTracker.CurrentUsage());
+	app->Run();
+
 	//if (app->Construct(1280, 720, 1, 1, false, false))
 	//	app->Start();
 
-	//Fractal::Application::DestroyHeapApplication(app);
-	//LOG_TRACE("Resources freed");
-	//LOG_WARN("Memory: {0}", s_AllocationTracker.CurrentUsage());
+	Fractal::Application::DestroyHeapApplication(app);
+	LOG_TRACE("Resources freed");
+	LOG_WARN("Memory: {0}KB", s_AllocationTracker.CurrentUsage());
 
-	//return 0;
+	return 0;
 }

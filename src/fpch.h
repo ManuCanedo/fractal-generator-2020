@@ -7,7 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
-#pragma once
 
 #include <algorithm>
 #include <math.h>
@@ -15,14 +14,25 @@
 #include <complex>
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <unordered_map>
 
 // Logging
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/fmt/ostr.h"
 #include "tools/Log.h"
 
 // Metrics
 #include "tools/Timer.h"
+
+// Events
+#include "events/Event.h"
+#include "events/WindowEvent.h"
+#include "events/KeyEvent.h"
+#include "events/MouseEvent.h"
+
+// Rendering
+#include "GLFW/glfw3.h"
 

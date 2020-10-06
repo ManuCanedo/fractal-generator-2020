@@ -2,10 +2,10 @@
 
 struct AllocationTracker
 {
-	uint32_t TotalAllocated{ 0 };
-	uint32_t TotalFreed{ 0 };
+	int TotalAllocated{ 0 };
+	int TotalFreed{ 0 };
 
-	uint32_t CurrentUsage()
+	int CurrentUsage()
 	{
 		return TotalAllocated - TotalFreed;
 	}

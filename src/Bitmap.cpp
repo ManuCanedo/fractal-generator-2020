@@ -8,11 +8,13 @@ namespace Fractal
 {
 	Bitmap::Bitmap(int width, int height)
 		: m_Width(width), m_Height(height),
-		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height))) {}
+		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height))) 
+	{
+	}
 
 	void Bitmap::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
 	{
-		uint8_t* pPixel{ m_pPixels.get() };
+		auto pPixel{ m_pPixels.get() };
 		pPixel += 3 * static_cast<int64_t>(y) * m_Width + 3 * static_cast<int64_t>(x);
 		pPixel[0] = blue; pPixel[1] = green; pPixel[2] = red;
 	}
