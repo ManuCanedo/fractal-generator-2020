@@ -1,4 +1,4 @@
-# Welcome to the Fractal Generator - A real-time fractal world explorer
+# Welcome to Fractal Generator - A real-time fractal world explorer
 
 The Mandelbrot fractal is a psichodelic mathematically-generated image that is self-like through different scales. The user will be able to zoom in and out different regions of the fractal in order to explore it. It will also have different presets that will allow the user to visualize and compare the Time Complexity of some of the most popular computer science algorithms (e.g. binary search, euclidean algorithm, Huffman algorithm, Djiistra...).
 
