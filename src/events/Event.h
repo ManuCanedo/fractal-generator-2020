@@ -7,7 +7,7 @@ namespace Fractal
 		None = 0,
 		WindowClose, WindowResize,
 		KeyPressed, KeyReleased, KeyHeld,
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		MouseButtonPressed, MouseButtonReleased, MouseButtonHeld, MouseMoved, MouseScrolled
 	};
 
 	class Event

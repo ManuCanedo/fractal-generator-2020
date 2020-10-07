@@ -7,18 +7,19 @@ struct AllocationTracker
 
 	int CurrentUsage()
 	{
-		return TotalAllocated - TotalFreed;
+		return static_cast<int>(TotalAllocated - TotalFreed);
 	}
+
 } s_AllocationTracker;
 
 void* operator new(size_t size)
 {
-	s_AllocationTracker.TotalAllocated += size;
+	s_AllocationTracker.TotalAllocated += static_cast<int>(size);
 	return malloc(size);
 }
 
 void operator delete(void* memory, size_t size)
 {
-	s_AllocationTracker.TotalFreed += size;
+	s_AllocationTracker.TotalFreed += static_cast<int>(size);
 	free(memory);
 }

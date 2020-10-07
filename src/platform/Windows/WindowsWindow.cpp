@@ -41,6 +41,10 @@ namespace Fractal
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
+		// GLEW
+		if (glewInit() != GLEW_OK)
+			LOG_ERROR("GlewInit error");
+
 		// GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
@@ -105,6 +109,12 @@ namespace Fractal
 						data.fEventCallback(event);
 						break;
 					}
+					case GLFW_REPEAT:
+					{
+						MouseButtonHeldEvent event(static_cast<MouseButtonCode>(button));
+						data.fEventCallback(event);
+						break;
+					}
 				}
 			});
 
@@ -120,7 +130,7 @@ namespace Fractal
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-				MouseScrolledEvent event(positionX, positionY);
+				MouseMovedEvent event(positionX, positionY);
 				data.fEventCallback(event);
 			});
 	}

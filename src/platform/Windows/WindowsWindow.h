@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 namespace Fractal
 {
 	class WindowsWindow : public Window

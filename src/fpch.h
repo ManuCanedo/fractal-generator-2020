@@ -27,12 +27,16 @@
 // Metrics
 #include "tools/Timer.h"
 
+// Rendering
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+
 // Events
 #include "events/Event.h"
 #include "events/WindowEvent.h"
 #include "events/KeyEvent.h"
 #include "events/MouseEvent.h"
 
-// Rendering
-#include "GLFW/glfw3.h"
+
+
 

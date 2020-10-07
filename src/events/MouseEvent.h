@@ -52,6 +52,22 @@ namespace Fractal
 		}
 	};
 
+	class MouseButtonHeldEvent : public MouseButtonEvent
+	{
+	public:
+		MouseButtonHeldEvent(MouseButtonCode code) : MouseButtonEvent(code) {}
+
+		static EventType GetStaticType() { return EventType::MouseButtonHeld; }
+
+		inline virtual EventType GetEventType() const override { return GetStaticType(); }
+		inline virtual std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "MouseButtonHeldEvent: " << static_cast<int>(m_MouseButtonCode);
+			return ss.str();
+		}
+	};
+
 	class MouseMovedEvent : public Event
 	{
 	public:

@@ -26,6 +26,11 @@ project "fractal-generator"
     pchheader "fpch.h"
     pchsource "src/fpch.cpp"
 
+    defines 
+    { 
+        "GLEW_STATIC" 
+    }
+
     files
     {
         "src/**.h",
@@ -37,18 +42,21 @@ project "fractal-generator"
         "src",
         "vendor/spdlog/include",
         "vendor/glfw/include",
-        "vendor/olcPixelEngine",
+        "vendor/glew/include",
         "%{IncludeDir.ImGui}"
     }
 
     libdirs
     {
-        "vendor/glfw/lib"
+        "vendor/glfw/lib",
+        "vendor/glew/lib"
 	}
 
     links
     {
         "ImGui",
+        "opengl32.lib",
+        "glew32s.lib",
         "glfw3.lib",
         "msvcrt.lib",
         "msvcmrt.lib"
