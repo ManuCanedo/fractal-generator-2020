@@ -10,25 +10,25 @@ namespace Fractal
 
 		void OnUpdate() override;
 
-		inline int GetWidth() const override { return m_Data.Width; }
-		inline int GetHeight() const override { return m_Data.Height; }
-		inline GLFWwindow* GetGLFWwindow() { return m_Window; }
-
 		void SetEventCallback(std::function<void(Event&)>) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
-	private:
-		virtual void Init(const WindowProperties& props);
-		virtual void Shutdown();
+		inline int GetWidth() const override { return m_Data.Width; }
+		inline int GetHeight() const override { return m_Data.Height; }
+		inline GLFWwindow* GetGLFWwindow() { return m_pWindow; }
 
 	private:
-		GLFWwindow* m_Window;
+		void Init(const WindowProperties& props);
+		void Shutdown();
+
+	private:
+		GLFWwindow* m_pWindow;
 
 		struct WindowData
 		{
-			std::string Title{ "Fractal World" };
-			int Width{ 1280 }, Height{ 720 };
+			std::string Title{ "Fractal Explorer" };
+			int Width{ 1600 }, Height{ 900 };
 			bool VSync{ false };
 
 			std::function<void(Event&)> fEventCallback;

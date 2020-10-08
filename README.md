@@ -21,18 +21,20 @@ Engine Progress checklist:
 + Logger implemented  
 + Function Timer implemented
 + Project generation through Premake
++ Pixel Engine Integration
 + Memory Allocations tracker implemented 
 + Using precompiled headers
 + Fractal algorithm multithreading
-+ GLFW and OpenGL integration - Replacing Pixel Engine
-+ Window Abstraction and Implementation for Windows
++ Started GLFW and OpenGL integration (replacing Pixel Engine)
++ Window Abstraction and platform specific implementation for Windows
++ Custom Event manager (moved away from Pixel Engine events)
++ Custom renderer using GLEW and OpenGL (fully removed support for Pixel Engine)
 
-Application Progress checklist:
+Fractal Application Progress checklist:
 + Bitmap Images Generation
 + Mandelbrot Fractal Generation
 + Histogram Colouring
 + Static zoom application
-+ Pixel Engine Integration
 + Real Time Fractal Generation
 + Real Time Sinusoidal Colouring
 + Screenshots

@@ -22,6 +22,30 @@ namespace Fractal
 		Shutdown();
 	}
 
+	void WindowsWindow::OnUpdate()
+	{
+		glfwPollEvents();
+		glfwSwapBuffers(m_pWindow);
+	}
+
+	void WindowsWindow::SetEventCallback(std::function<void(Event&)> onEventFunction)
+	{
+		m_Data.fEventCallback = onEventFunction;
+	}
+
+	void WindowsWindow::SetVSync(bool enabled)
+	{
+		if (enabled)
+			glfwSwapInterval(1);
+		else
+			glfwSwapInterval(0);
+	}
+
+	bool WindowsWindow::IsVSync() const
+	{
+		return m_Data.VSync;
+	}
+
 	void WindowsWindow::Init(const WindowProperties& props)
 	{
 		m_Data.Title = props.title;
@@ -36,17 +60,17 @@ namespace Fractal
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		m_pWindow = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
+		glfwMakeContextCurrent(m_pWindow);
+		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetVSync(true);
 
-		// GLEW
 		if (glewInit() != GLEW_OK)
 			LOG_ERROR("GlewInit error");
 
 		// GLFW Callbacks
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				data.Width = width;
@@ -56,7 +80,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
+		glfwSetWindowCloseCallback(m_pWindow, [](GLFWwindow* window)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -64,7 +88,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_pWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -91,7 +115,7 @@ namespace Fractal
 				}
 			});
 
-		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_pWindow, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -109,16 +133,10 @@ namespace Fractal
 						data.fEventCallback(event);
 						break;
 					}
-					case GLFW_REPEAT:
-					{
-						MouseButtonHeldEvent event(static_cast<MouseButtonCode>(button));
-						data.fEventCallback(event);
-						break;
-					}
 				}
 			});
 
-		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double offsetX, double offsetY)
+		glfwSetScrollCallback(m_pWindow, [](GLFWwindow* window, double offsetX, double offsetY)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -126,7 +144,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double positionX, double positionY)
+		glfwSetCursorPosCallback(m_pWindow, [](GLFWwindow* window, double positionX, double positionY)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -137,33 +155,6 @@ namespace Fractal
 
 	void WindowsWindow::Shutdown()
 	{
-		glfwDestroyWindow(m_Window);
+		glfwDestroyWindow(m_pWindow);
 	}
-
-	void WindowsWindow::OnUpdate()
-	{
-		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
-	}
-
-	void WindowsWindow::SetEventCallback(std::function<void(Event&)> onEventFunction)
-	{
-		m_Data.fEventCallback = onEventFunction;
-	}
-
-	void WindowsWindow::SetVSync(bool enabled)
-	{
-		if (enabled)
-			glfwSwapInterval(1);
-		else
-			glfwSwapInterval(0);
-	}
-
-	bool WindowsWindow::IsVSync() const
-	{
-		return m_Data.VSync;
-	}
-
-
-
 }

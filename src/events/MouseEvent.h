@@ -7,7 +7,7 @@ namespace Fractal
 	enum class MouseButtonCode
 	{
 		// glfw
-		LEFTCLICK = 0, RIGHTCLICK = 1
+		LEFTCLICK = 0, RIGHTCLICK = 1, WHEEL = 2
 	};
 
 	class MouseButtonEvent : public Event
@@ -48,22 +48,6 @@ namespace Fractal
 		{
 			std::stringstream ss;
 			ss << "MouseButtonReleasedEvent: " << static_cast<int>(m_MouseButtonCode);
-			return ss.str();
-		}
-	};
-
-	class MouseButtonHeldEvent : public MouseButtonEvent
-	{
-	public:
-		MouseButtonHeldEvent(MouseButtonCode code) : MouseButtonEvent(code) {}
-
-		static EventType GetStaticType() { return EventType::MouseButtonHeld; }
-
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "MouseButtonHeldEvent: " << static_cast<int>(m_MouseButtonCode);
 			return ss.str();
 		}
 	};

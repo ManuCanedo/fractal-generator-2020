@@ -1,14 +1,16 @@
 # Screenshots
 
-03_10: Fractal screenshots taken by the "Take Screenshot functionality".  
+08_10: Higher Res pictures after implementing custom OpenGL renderer
 
-![Fractal](10_03_Fractal_World_1.jpg)  
+![Fractal](10_08_Fractal_OpenGL_0) 
+
+![Fractal](10_08_Fractal_OpenGL_1) 
+
+03_10: Fractal screenshots taken by the "Take Screenshot functionality".   
 
 ![Fractal](10_03_Fractal_World_2.jpg) 
 
 ![Fractal](10_03_Fractal_World_3.jpg)   
-
-![Fractal](10_03_Fractal_World_5.jpg)
 
 29_09: Picture of a zoom into one of the branches of the fractal.   
 

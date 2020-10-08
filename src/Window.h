@@ -4,29 +4,25 @@ namespace Fractal
 {
 	struct Point2D
 	{
-		double x{ 0 }, y{ 0 };
+		double x{ 0.0 }, y{ 0.0 };
+		Point2D(double x = 0.0, double y = 0.0) : x(x), y(y) {}
+
+		static Point2D InvertY(const Point2D& other) { return { other.x, -other.y }; }
+		static Point2D InvertX(const Point2D& other) { return { -other.x, other.y }; }
 
 		Point2D operator+(const Point2D& other) const { return { x + other.x, y + other.y }; }
 		Point2D operator-(const Point2D& other) const { return { x - other.x, y - other.y }; }
 		Point2D operator/(const Point2D& other) const { return { x / other.y, y / other.y }; }
-
 		void operator+=(const Point2D& other) { x += other.x; y += other.y; }
 		void operator-=(const Point2D& other) { x -= other.x; y -= other.y; }
 		void operator*=(double other) { x *= other; y *= other; }
-
-	};
-
-	struct ScrSection
-	{
-		Point2D topLeft{ 0 }, bottomRight{ 0 };
-		int scrWidth{ 1280 };
 	};
 
 	struct WindowProperties
 	{
-		std::string title{ "Fractal World" };
-		int width{ 1280 };
-		int height{ 720 };
+		std::string title{ "Fractal Explorer" };
+		int width{ 1600 };
+		int height{ 900 };
 	};
 
 	class Window
