@@ -1,5 +1,8 @@
 #pragma once
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 namespace Fractal
 {
 	class WindowsWindow : public Window
@@ -24,6 +27,7 @@ namespace Fractal
 
 	private:
 		GLFWwindow* m_pWindow;
+		std::unique_ptr<ImGuiLayer> m_pImGuiLayer; 
 
 		struct WindowData
 		{

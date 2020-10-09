@@ -1,6 +1,7 @@
 #include "fpch.h"
 
 #include "Window.h"
+#include "ImGuiLayer.h"
 #include "WindowsWindow.h"
 
 namespace Fractal
@@ -24,6 +25,7 @@ namespace Fractal
 
 	void WindowsWindow::OnUpdate()
 	{
+		m_pImGuiLayer->OnUpdate();
 		glfwPollEvents();
 		glfwSwapBuffers(m_pWindow);
 	}
@@ -68,6 +70,9 @@ namespace Fractal
 
 		if (glewInit() != GLEW_OK)
 			LOG_ERROR("GlewInit error");
+
+		// Set up ImGui
+		m_pImGuiLayer = std::make_unique<ImGuiLayer>(m_pWindow);
 
 		// GLFW Callbacks
 		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)

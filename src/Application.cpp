@@ -1,9 +1,11 @@
 #include "fpch.h"
-
-#include "tools/AllocationTracker.h"
 #include "Window.h"
 #include "Bitmap.h"
 #include "Application.h"
+#include "tools/AllocationTracker.h"
+
+#include <GLFW/glfw3.h>
+
 
 namespace Fractal
 {
@@ -43,6 +45,7 @@ namespace Fractal
 		int width{ m_pWindow->GetWidth() }, height{ m_pWindow->GetHeight() };
 
 		if (m_bScreenshot) m_bScreenshot = !SaveFractal(width, height);
+		ChangeWorldScale(m_ScalingFactor);
 
 		Point2D pixTopLeft{ 0, 0 }, pixBottomRight(width, height);
 		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
@@ -60,6 +63,8 @@ namespace Fractal
 				Point2D(fractTopLeft.x + (fractalSectionWidth * i), fractTopLeft.y),
 				Point2D(fractTopLeft.x + (fractalSectionWidth * (i + 1)), fractBottomRight.y));
 
+		for (auto& f : m_Futures)
+			f.wait_for(std::chrono::milliseconds(1));
 
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
 		m_pWindow->OnUpdate();
@@ -144,8 +149,8 @@ namespace Fractal
 	{
 		EventDispatcher dispatcher(event);
 
-		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) 
-			{ 
+		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event)
+			{
 				m_bRunning = false;
 				return true;
 			});
@@ -174,21 +179,13 @@ namespace Fractal
 		dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent& event)
 			{
 				if (event.GetMouseButton() == MouseButtonCode::WHEEL)
-				{
 					m_bPanning = false;
-				}
 				return true;
 			});
 
 		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event)
 			{
-				Point2D mouseCoordsBeforeZoom, mouseCoordsAfterZoom;
-
-				ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);
-				m_Scale *= (event.GetOffsetY() > 0) ? 1.1 : 0.9;
-				ScreenToWorld(m_MouseCoords, mouseCoordsAfterZoom);
-				m_Offset += (mouseCoordsBeforeZoom - mouseCoordsAfterZoom);
-
+				(event.GetOffsetY() > 0) ? m_ScalingFactor = 1.1 : m_ScalingFactor = 0.9;
 				return true;
 			});
 
@@ -218,9 +215,8 @@ namespace Fractal
 					break;
 				}
 				default:
-					return true;
+					break;
 				}
-
 				return true;
 			});
 
@@ -230,16 +226,21 @@ namespace Fractal
 				{
 				case KeyCode::UP:
 				case KeyCode::DOWN:
-					Point2D mouseCoordsBeforeZoom, mouseCoordsAfterZoom;
-					ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);
-					m_Scale *= (event.GetKeyCode() == KeyCode::UP) ? 1.1 : 0.9;
-					ScreenToWorld(m_MouseCoords, mouseCoordsAfterZoom);
-					m_Offset += (mouseCoordsBeforeZoom - mouseCoordsAfterZoom);
-					break;
+					(event.GetKeyCode() == KeyCode::UP) ? m_ScalingFactor = 1.1 : m_ScalingFactor = 0.9;
 				}
-
 				return true;
 			});
+	}
+
+	void Application::ChangeWorldScale(double scalingFactor)
+	{
+		Point2D mouseCoordsBeforeZoom{ 0.0, 0.0 }, mouseCoordsAfterZoom{ 0.0, 0.0 };
+		ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);
+		m_Scale *= scalingFactor;
+		ScreenToWorld(m_MouseCoords, mouseCoordsAfterZoom);
+
+		m_Offset += mouseCoordsBeforeZoom - mouseCoordsAfterZoom;
+		m_ScalingFactor = 1.0;
 	}
 
 	inline void Application::ScreenToWorld(const Point2D& n, Point2D& v)

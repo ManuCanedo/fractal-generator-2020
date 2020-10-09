@@ -27,10 +27,6 @@
 // Metrics
 #include "tools/Timer.h"
 
-// Rendering
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-
 // Events
 #include "events/Event.h"
 #include "events/WindowEvent.h"
