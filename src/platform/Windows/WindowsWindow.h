@@ -13,13 +13,15 @@ namespace Fractal
 
 		void OnUpdate() override;
 
+		int GetWidth() const override { return m_Data.Width; }
+		int GetHeight() const override { return m_Data.Height; }
+		GLFWwindow* GetWindowNative() { return m_pWindow; }
+
+		static WindowsWindow& GetWindowsWindow() { return *s_pInstance; }
+
 		void SetEventCallback(std::function<void(Event&)>) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
-
-		inline int GetWidth() const override { return m_Data.Width; }
-		inline int GetHeight() const override { return m_Data.Height; }
-		inline GLFWwindow* GetGLFWwindow() { return m_pWindow; }
 
 	private:
 		void Init(const WindowProperties& props);
@@ -37,6 +39,10 @@ namespace Fractal
 
 			std::function<void(Event&)> fEventCallback;
 		} m_Data;
+
+	private:
+		static WindowsWindow* s_pInstance;
+
 	};
 
 }

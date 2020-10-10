@@ -1,12 +1,13 @@
 #include "fpch.h"
 
 #include "Window.h"
-#include "ImGuiLayer.h"
+#include "UI/ImGuiLayer.h"
 #include "WindowsWindow.h"
 
 namespace Fractal
 {
 	static bool s_GLFWInitialized = false;
+	WindowsWindow* WindowsWindow::s_pInstance{ nullptr };
 
 	Window* Window::Create(const WindowProperties& props)
 	{
@@ -15,6 +16,7 @@ namespace Fractal
 
 	WindowsWindow::WindowsWindow(const WindowProperties& props)
 	{
+		s_pInstance = this;
 		Init(props);
 	}
 
@@ -68,11 +70,10 @@ namespace Fractal
 		glfwSetWindowUserPointer(m_pWindow, &m_Data);
 		SetVSync(true);
 
-		if (glewInit() != GLEW_OK)
-			LOG_ERROR("GlewInit error");
+		if (glewInit() != GLEW_OK) LOG_ERROR("GlewInit error");
 
 		// Set up ImGui
-		m_pImGuiLayer = std::make_unique<ImGuiLayer>(m_pWindow);
+		m_pImGuiLayer = std::make_unique<ImGuiLayer>();
 
 		// GLFW Callbacks
 		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
@@ -99,24 +100,24 @@ namespace Fractal
 
 				switch (action)
 				{
-					case GLFW_PRESS:
-					{
-						KeyPressedEvent event(static_cast<KeyCode>(key));
-						data.fEventCallback(event);
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						KeyReleasedEvent event(static_cast<KeyCode>(key));
-						data.fEventCallback(event);
-						break;
-					}
-					case GLFW_REPEAT:
-					{
-						KeyHeldEvent event(static_cast<KeyCode>(key));
-						data.fEventCallback(event);
-						break;
-					}
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent event(static_cast<KeyCode>(key));
+					data.fEventCallback(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent event(static_cast<KeyCode>(key));
+					data.fEventCallback(event);
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyHeldEvent event(static_cast<KeyCode>(key));
+					data.fEventCallback(event);
+					break;
+				}
 				}
 			});
 
@@ -126,18 +127,18 @@ namespace Fractal
 
 				switch (action)
 				{
-					case GLFW_PRESS:
-					{
-						MouseButtonPressedEvent event(static_cast<MouseButtonCode>(button));
-						data.fEventCallback(event);
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						MouseButtonReleasedEvent event(static_cast<MouseButtonCode>(button));
-						data.fEventCallback(event);
-						break;
-					}
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent event(static_cast<MouseButtonCode>(button));
+					data.fEventCallback(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent event(static_cast<MouseButtonCode>(button));
+					data.fEventCallback(event);
+					break;
+				}
 				}
 			});
 

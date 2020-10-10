@@ -1,15 +1,15 @@
 #include "fpch.h"
-#include "Window.h"
-#include "Bitmap.h"
+
 #include "Application.h"
+#include "Bitmap.h"
 #include "tools/AllocationTracker.h"
 
 #include <GLFW/glfw3.h>
 
-
 namespace Fractal
 {
 	static std::mutex s_Mutex;
+	Application* Application::s_pInstance{ nullptr };
 
 	// Ez-tweak globals, only used in constructor below
 	constexpr char* NAME = "Fractal Explorer";
@@ -17,19 +17,11 @@ namespace Fractal
 
 	Application::Application() : m_Futures(m_Threads), m_Scale({ WIDTH / 2, HEIGHT })
 	{
+		s_pInstance = this;
+
 		m_pWindow = std::unique_ptr<Window>(Window::Create({ NAME, WIDTH, HEIGHT }));
 		m_pWindow->SetEventCallback([this](Event& event) { OnEvent(event); });
 		m_pFractal = std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(m_pWindow->GetWidth()) * m_pWindow->GetHeight());
-	}
-
-	Application* Application::CreateHeapApplication()
-	{
-		return new Application;
-	}
-
-	void Application::DestroyHeapApplication(Application* app)
-	{
-		delete app;
 	}
 
 	void Application::Run()
@@ -64,7 +56,7 @@ namespace Fractal
 				Point2D(fractTopLeft.x + (fractalSectionWidth * (i + 1)), fractBottomRight.y));
 
 		for (auto& f : m_Futures)
-			f.wait_for(std::chrono::milliseconds(1));
+			f.wait();
 
 		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
 		m_pWindow->OnUpdate();
@@ -254,15 +246,16 @@ namespace Fractal
 int main()
 {
 	Fractal::Log::Init();
-	LOG_TRACE("System logger initialized");
+	LOG_TRACE("Initializing system logger");
 
-	LOG_INFO("Application Launched");
-	auto app = Fractal::Application::CreateHeapApplication();
+	LOG_TRACE("Initializing application");
+	auto app = std::make_unique<Fractal::Application>();
+
 	LOG_WARN("Memory: {0}KB", s_AllocationTracker.CurrentUsage());
+
+	LOG_INFO("Launching application");
 	app->Run();
 
-	Fractal::Application::DestroyHeapApplication(app);
-	LOG_TRACE("Resources freed");
 	LOG_WARN("Memory: {0}KB", s_AllocationTracker.CurrentUsage());
 
 	return 0;

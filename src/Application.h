@@ -1,19 +1,21 @@
 #pragma once
 
+#include "Window.h"
+
 namespace Fractal
 {
 	class Application
 	{
 	public:
-		~Application() = default;
 		Application();
-
-		static Application* CreateHeapApplication();
-		static void DestroyHeapApplication(Application* app);
+		~Application() = default;
 
 		void Run();
 		void Update();
 		void OnEvent(Event& event);
+		
+		inline Window& GetWindow() { return *m_pWindow; }
+		inline static Application& GetApplication() { return *s_pInstance; }
 
 	private:
 		bool CalculateFractalSection(const int width, const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, Point2D& fractBottomRight);
@@ -21,6 +23,9 @@ namespace Fractal
 		void ChangeWorldScale(double scalingFactor);
 		
 		inline void ScreenToWorld(const Point2D& n, Point2D& v);
+
+	private:
+		static Application* s_pInstance;
 
 	private:
 		std::unique_ptr<uint8_t[]> m_pFractal{ nullptr };
