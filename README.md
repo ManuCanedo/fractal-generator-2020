@@ -12,7 +12,7 @@ Use UP and DOWN to zoom in and out to the cursor location. Use LEFT and RIGHT to
 
 [Binaries](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
-[Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/media/screenshots) 
+[Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/screenshots) 
 
 ## Development progress
 
