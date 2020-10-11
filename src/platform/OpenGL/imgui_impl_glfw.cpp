@@ -39,8 +39,8 @@
 
 #include "fpch.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
+#include <imgui.h>
+#include <examples/imgui_impl_glfw.h>
 
 // GLFW
 #include <GLFW/glfw3.h>

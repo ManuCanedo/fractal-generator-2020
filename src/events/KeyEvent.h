@@ -14,7 +14,7 @@ namespace Fractal
 	class KeyEvent : public Event
 	{
 	public:
-		inline KeyCode GetKeyCode() const { return m_KeyCode; };
+		KeyCode GetKeyCode() const { return m_KeyCode; };
 
 	protected:
 		KeyEvent(const KeyCode key) : m_KeyCode(key) {}
@@ -28,8 +28,8 @@ namespace Fractal
 
 		static EventType GetStaticType() { return EventType::KeyPressed; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyPressedEvent: " << static_cast<int>(m_KeyCode);
@@ -44,8 +44,8 @@ namespace Fractal
 
 		static EventType GetStaticType() { return EventType::KeyReleased; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << static_cast<int>(m_KeyCode);
@@ -60,8 +60,8 @@ namespace Fractal
 
 		static EventType GetStaticType() { return EventType::KeyHeld; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyHeldEvent: " << static_cast<int>(m_KeyCode);

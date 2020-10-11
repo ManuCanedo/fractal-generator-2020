@@ -1,5 +1,4 @@
 #include "fpch.h"
-
 #include "Application.h"
 #include "Bitmap.h"
 #include "tools/AllocationTracker.h"
@@ -11,7 +10,7 @@ namespace Fractal
 	static std::mutex s_Mutex;
 	Application* Application::s_pInstance{ nullptr };
 
-	// Ez-tweak globals, only used in constructor below
+	// Globals only used in constructor below
 	constexpr char* NAME = "Fractal Explorer";
 	constexpr int WIDTH{ 1600 }, HEIGHT{ 900 };
 
@@ -34,73 +33,69 @@ namespace Fractal
 
 	void Application::Update()
 	{
-		int width{ m_pWindow->GetWidth() }, height{ m_pWindow->GetHeight() };
+		Point2D pixTopLeft{ 0.0f, 0.0f }; 
+		Point2D pixBottomRight{ static_cast<float>(m_pWindow->GetWidth()), static_cast<float>(m_pWindow->GetHeight()) };
+		Point2D fractTopLeft{ -2.0f, -1.0f }, fractBottomRight{ 1.0f, 1.0f };
 
-		if (m_bScreenshot) m_bScreenshot = !SaveFractal(width, height);
 		ChangeWorldScale(m_ScalingFactor);
-
-		Point2D pixTopLeft{ 0, 0 }, pixBottomRight(width, height);
-		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
-
 		ScreenToWorld(pixTopLeft, fractTopLeft);
 		ScreenToWorld(pixBottomRight, fractBottomRight);
 
-		double screenSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
-		double fractalSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
+		float scrSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
+		float fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
 
 		for (size_t i = 0; i < m_Threads; ++i)
-			m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this, width,
-				Point2D(pixTopLeft.x + (screenSectionWidth * i), pixTopLeft.y),
-				Point2D(pixTopLeft.x + (screenSectionWidth * (i + 1)), pixBottomRight.y),
-				Point2D(fractTopLeft.x + (fractalSectionWidth * i), fractTopLeft.y),
-				Point2D(fractTopLeft.x + (fractalSectionWidth * (i + 1)), fractBottomRight.y));
+			m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
+				Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
+				Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
+				Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
+				Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
 
-		for (auto& f : m_Futures)
-			f.wait();
+		if (m_bScreenshot) m_bScreenshot = !SaveFractal(m_pWindow->GetWidth(), m_pWindow->GetHeight());
 
-		glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
+		for (auto& f : m_Futures) f.wait();
+		glDrawPixels(m_pWindow->GetWidth(), m_pWindow->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
+
 		m_pWindow->OnUpdate();
 	}
 
-	bool Application::CalculateFractalSection(const int width, const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, Point2D& fractBottomRight)
+	bool Application::CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
-		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
-		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
+		float xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
+		float yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
-		double xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
-		int rowSize{ width }, yOffset{ 0 };
+		float xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
+		int rowSize{ m_pWindow->GetWidth() }, yOffset{ 0 };
 
-		for (size_t y = pixTopLeft.y; y < pixBottomRight.y; ++y)
+		for (int y = static_cast<int>(pixTopLeft.y); y < pixBottomRight.y; ++y)
 		{
 			xPos = fractTopLeft.x;
-			for (size_t x = pixTopLeft.x; x < pixBottomRight.x; ++x)
+			for (int x = static_cast<int>(pixTopLeft.x); x < pixBottomRight.x; ++x)
 			{
 				std::complex<double> c{ xPos, yPos };
 				std::complex<double> z{ 0.0, 0.0 };
-
-				auto zRe2{ z.real() * z.real() };
-				auto zIm2{ z.imag() * z.imag() };
 				int n{ 0 };
 
-				while (zRe2 + zIm2 < 4 && n < m_Iterations)
+				while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < m_Iterations)
 				{
-					z = { zRe2 - zIm2 + c.real(), 2 * z.real() * z.imag() + c.imag() };
-					zRe2 = z.real() * z.real();
-					zIm2 = z.imag() * z.imag();
+					z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
+						2 * z.real() * z.imag() + c.imag() };
 					++n;
 				}
 
+				uint8_t* pPixels{ &m_pFractal[3 * static_cast<int64_t>(yOffset + x)] };
 				uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
+
 				if (n < m_Iterations)
 				{
-					red = static_cast<uint8_t>(256 * (0.5 * sin(0.1 * static_cast<double>(n)) + 0.5));
-					green = static_cast<uint8_t>(256 * (0.2 * sin(0.1 * static_cast<double>(n) + 2.094) + 0.5));
-					blue = static_cast<uint8_t>(256 * (0.5 * sin(0.1 * static_cast<double>(n) + 4.188) + 0.5));
+					red = static_cast<uint8_t>	(256 * (m_DynamicRGB.x * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + m_StaticRGB.x));
+					green = static_cast<uint8_t>	(256 * (m_DynamicRGB.y * sin(0.1 * static_cast<float>(n) + m_RGBOffset.y) + m_StaticRGB.y));
+					blue = static_cast<uint8_t>	(256 * (m_DynamicRGB.z * sin(0.1 * static_cast<float>(n) + m_RGBOffset.z) + m_StaticRGB.z));
 				}
 
-				m_pFractal[3 * static_cast<int64_t>(yOffset + x) + 0] = red;
-				m_pFractal[3 * static_cast<int64_t>(yOffset + x) + 1] = green;
-				m_pFractal[3 * static_cast<int64_t>(yOffset + x) + 2] = blue;
+				pPixels[0] = red;
+				pPixels[1] = green;
+				pPixels[2] = blue;
 
 				xPos += xScale;
 			}
@@ -177,7 +172,7 @@ namespace Fractal
 
 		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event)
 			{
-				(event.GetOffsetY() > 0) ? m_ScalingFactor = 1.1 : m_ScalingFactor = 0.9;
+				(event.GetOffsetY() > 0) ? m_ScalingFactor = 1.1f : m_ScalingFactor = 0.9f;
 				return true;
 			});
 
@@ -218,21 +213,21 @@ namespace Fractal
 				{
 				case KeyCode::UP:
 				case KeyCode::DOWN:
-					(event.GetKeyCode() == KeyCode::UP) ? m_ScalingFactor = 1.1 : m_ScalingFactor = 0.9;
+					(event.GetKeyCode() == KeyCode::UP) ? m_ScalingFactor = 1.1f : m_ScalingFactor = 0.9f;
 				}
 				return true;
 			});
 	}
 
-	void Application::ChangeWorldScale(double scalingFactor)
+	void Application::ChangeWorldScale(float scalingFactor)
 	{
-		Point2D mouseCoordsBeforeZoom{ 0.0, 0.0 }, mouseCoordsAfterZoom{ 0.0, 0.0 };
+		Point2D mouseCoordsBeforeZoom{ 0.0f, 0.0f }, mouseCoordsAfterZoom{ 0.0f, 0.0f };
 		ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);
 		m_Scale *= scalingFactor;
 		ScreenToWorld(m_MouseCoords, mouseCoordsAfterZoom);
 
 		m_Offset += mouseCoordsBeforeZoom - mouseCoordsAfterZoom;
-		m_ScalingFactor = 1.0;
+		m_ScalingFactor = 1.0f;
 	}
 
 	inline void Application::ScreenToWorld(const Point2D& n, Point2D& v)

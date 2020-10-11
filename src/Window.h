@@ -4,8 +4,8 @@ namespace Fractal
 {
 	struct Point2D
 	{
-		double x{ 0.0 }, y{ 0.0 };
-		Point2D(double x = 0.0, double y = 0.0) : x(x), y(y) {}
+		float x{ 0.0f }, y{ 0.0f };
+		Point2D(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
 
 		static Point2D InvertY(const Point2D& other) { return { other.x, -other.y }; }
 		static Point2D InvertX(const Point2D& other) { return { -other.x, other.y }; }
@@ -15,7 +15,7 @@ namespace Fractal
 		Point2D operator/(const Point2D& other) const { return { x / other.y, y / other.y }; }
 		void operator+=(const Point2D& other) { x += other.x; y += other.y; }
 		void operator-=(const Point2D& other) { x -= other.x; y -= other.y; }
-		void operator*=(double other) { x *= other; y *= other; }
+		void operator*=(float other) { x *= other; y *= other; }
 	};
 
 	struct WindowProperties

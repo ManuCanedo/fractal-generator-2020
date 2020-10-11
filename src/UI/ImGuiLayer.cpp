@@ -1,8 +1,11 @@
 #include "fpch.h"
 #include "Application.h"
 #include "ImGuiLayer.h"
-#include "Events/MouseEvent.h"
 #include "Platform/Windows/WindowsWindow.h"
+
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
+#include <GL/glew.h>
 
 namespace Fractal
 {
@@ -69,9 +72,7 @@ namespace Fractal
 
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
+		ImGui::StyleColorsClassic();
 
 		ImGui_ImplGlfw_InitForOpenGL(window.GetWindowNative(), true);
 		ImGui_ImplOpenGL3_Init("#version 410");
@@ -86,24 +87,36 @@ namespace Fractal
 
 	void ImGuiLayer::DefineUI()
 	{
-		static float f = 0.0f;
-		static int counter = 0;
+		static float rOffset{ 0.0f }, gOffset{ 2.094f }, bOffset{ 4.188f };
+		static bool bAVX{ false };
+		Application& app{ Application::GetApplication() };
 
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Fractal Configuration");
+		
+		ImGui::Text("Color Settings");
+		ImGui::SliderFloat("Red", &rOffset, 0.0f, 6.28f);
+		ImGui::SliderFloat("Green", &gOffset, 0.0f, 6.28f);
+		ImGui::SliderFloat("Blue", &bOffset, 0.0f, 6.28f);
 
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &m_bHidden);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &m_bHidden);
+		if (ImGui::Button("Default"))
+		{
+			rOffset = 0.0f; 
+			gOffset = 2.094f; 
+			bOffset = 4.188f;
+		}
 
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&m_ClearColor); // Edit 3 floats representing a color
+		app.SetRGBOffset(rOffset, gOffset, bOffset);
 
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
+		ImGui::Text("------------------------------");
+		ImGui::Text("Performance");
 
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("%d Iterations", app.GetIterations());
+		ImGui::Text("Frametime %.2f ms", 1000.0f / ImGui::GetIO().Framerate);
+		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+		ImGui::Checkbox("AVX Mode", &bAVX);
+
+		app.SetAVX(bAVX);
+
 		ImGui::End();
 	}
 }

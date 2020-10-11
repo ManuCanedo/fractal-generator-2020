@@ -1,4 +1,3 @@
-// Precompiled header
 #include "fpch.h"
 
 namespace Fractal

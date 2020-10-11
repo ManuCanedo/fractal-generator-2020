@@ -17,11 +17,11 @@ namespace Fractal
 		int GetHeight() const override { return m_Data.Height; }
 		GLFWwindow* GetWindowNative() { return m_pWindow; }
 
-		static WindowsWindow& GetWindowsWindow() { return *s_pInstance; }
-
 		void SetEventCallback(std::function<void(Event&)>) override;
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+
+		static WindowsWindow& GetWindowsWindow() { return *s_pInstance; }
 
 	private:
 		void Init(const WindowProperties& props);
@@ -35,14 +35,12 @@ namespace Fractal
 		{
 			std::string Title{ "Fractal Explorer" };
 			int Width{ 1600 }, Height{ 900 };
-			bool VSync{ false };
 
+			bool VSync{ false };
 			std::function<void(Event&)> fEventCallback;
 		} m_Data;
 
 	private:
 		static WindowsWindow* s_pInstance;
-
 	};
-
 }

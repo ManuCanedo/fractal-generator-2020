@@ -6,14 +6,13 @@ namespace Fractal
 {
 	enum class MouseButtonCode
 	{
-		// glfw
 		LEFTCLICK = 0, RIGHTCLICK = 1, WHEEL = 2
 	};
 
 	class MouseButtonEvent : public Event
 	{
 	public:
-		inline MouseButtonCode GetMouseButton() const { return m_MouseButtonCode; }
+		MouseButtonCode GetMouseButton() const { return m_MouseButtonCode; }
 
 	protected:
 		MouseButtonEvent(const MouseButtonCode button) : m_MouseButtonCode(button) {}
@@ -27,8 +26,8 @@ namespace Fractal
 
 		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseButtonPressedEvent: " << static_cast<int>(m_MouseButtonCode);
@@ -43,8 +42,8 @@ namespace Fractal
 
 		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseButtonReleasedEvent: " << static_cast<int>(m_MouseButtonCode);
@@ -55,16 +54,16 @@ namespace Fractal
 	class MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(const double x, const double y)
+		MouseMovedEvent(const float x, const float y)
 			: m_MouseX(x), m_MouseY(y) {}
 
-		inline double GetX() const { return m_MouseX; }
-		inline double GetY() const { return m_MouseY; }
+		float GetX() const { return m_MouseX; }
+		float GetY() const { return m_MouseY; }
 
 		static EventType GetStaticType() { return EventType::MouseMoved; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseMovedEvent: (" << m_MouseX << "," << m_MouseY << ")";
@@ -72,22 +71,22 @@ namespace Fractal
 		}
 
 	private:
-		double m_MouseX, m_MouseY;
+		float m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent: public Event
 	{
 	public:
-		MouseScrolledEvent(const double xOffset, const double yOffset)
+		MouseScrolledEvent(const float xOffset, const float yOffset)
 			: m_OffsetX(xOffset), m_OffsetY(yOffset) {}
 
-		inline double GetOffsetX() const { return m_OffsetX; }
-		inline double GetOffsetY() const { return m_OffsetY; }
+		float GetOffsetX() const { return m_OffsetX; }
+		float GetOffsetY() const { return m_OffsetY; }
 
 		static EventType GetStaticType() { return EventType::MouseScrolled; }
 
-		inline virtual EventType GetEventType() const override { return GetStaticType(); }
-		inline virtual std::string ToString() const override
+		EventType GetEventType() const override { return GetStaticType(); }
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseScrolledEvent: (" << m_OffsetX << "," << m_OffsetY << ")";
@@ -95,7 +94,7 @@ namespace Fractal
 		}
 
 	private:
-		double m_OffsetX, m_OffsetY;
+		float m_OffsetX, m_OffsetY;
 	};
 }
 
