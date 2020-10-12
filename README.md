@@ -25,10 +25,12 @@ Engine Progress checklist:
 + Memory Allocations tracker implemented 
 + Using precompiled headers
 + Fractal algorithm multithreading
-+ Started GLFW and OpenGL integration (replacing Pixel Engine)
-+ Window Abstraction and platform specific implementation for Windows
-+ Custom Event manager (moved away from Pixel Engine events)
-+ Custom renderer using GLEW and OpenGL (fully removed support for Pixel Engine)
++ Started GLFW and OpenGL (GLEW) integration (replacing Pixel Engine)
++ Window Abstraction and platform specific Window implementation for Windows (GLFW)
++ Custom Event Manager
++ ImGui Layer Abstraction and platform specific implementation (OpenGL)
++ -In Progress- Fractal Generation using AVX2 vector extensions (Compiler Intrinsics)
+
 
 Fractal Application Progress checklist:
 + Bitmap Images Generation
@@ -38,6 +40,8 @@ Fractal Application Progress checklist:
 + Real Time Fractal Generation
 + Real Time Sinusoidal Colouring
 + Screenshots
++ GUI
+
 
 ## Stay in touch
 

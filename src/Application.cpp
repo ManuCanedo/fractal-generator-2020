@@ -34,20 +34,20 @@ namespace Fractal
 
 	void Application::Update()
 	{
-		Point2D pixTopLeft{ 0.0f, 0.0f };
-		Point2D pixBottomRight{ static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()) };
-		Point2D fractTopLeft{ -2.0f, -1.0f }, fractBottomRight{ 1.0f, 1.0f };
+		Point2D pixTopLeft{ 0.0, 0.0 };
+		Point2D pixBottomRight{ static_cast<double>(m_Window->GetWidth()), static_cast<double>(m_Window->GetHeight()) };
+		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
 
 		ChangeWorldScale(m_ScalingFactor);
 		ScreenToWorld(pixTopLeft, fractTopLeft);
 		ScreenToWorld(pixBottomRight, fractBottomRight);
 
-		float scrSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
-		float fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
+		double scrSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
+		double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
 		int iters{ m_Iterations };
 
 		if (m_bBinarySearch) // Binary Search Simulation Mode 
-			iters = log2(iters);
+			iters = static_cast<int>(log2(iters));
 
 		if (!m_bAVX) // Standard Fractal Calculation Mode
 		{
@@ -62,7 +62,7 @@ namespace Fractal
 		else // AVX Fractal Calculation Mode
 		{
 			for (size_t i = 0; i < m_Threads; ++i)
-				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
+				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSectionAVX, this,
 					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
 					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
@@ -81,10 +81,10 @@ namespace Fractal
 	bool Application::CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
 		const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, const int iterations, uint8_t* pMemory)
 	{
-		float xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
-		float yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
+		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
+		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
-		float xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
+		double xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
 		int rowSize{ width }, yOffset{ 0 };
 
 		for (int y = static_cast<int>(pixTopLeft.y); y < pixBottomRight.y; ++y)
@@ -92,15 +92,14 @@ namespace Fractal
 			xPos = fractTopLeft.x;
 			for (int x = static_cast<int>(pixTopLeft.x); x < pixBottomRight.x; ++x)
 			{
-				std::complex<double> c{ xPos, yPos };
 				std::complex<double> z{ 0.0, 0.0 };
+				std::complex<double> c{ xPos, yPos };
 				int n{ 0 };
 
-				while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iterations)
+				while (z.real() * z.real() + z.imag() * z.imag() < 4 && ++n < iterations)
 				{
 					z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
 						2 * z.real() * z.imag() + c.imag() };
-					++n;
 				}
 
 				uint8_t* pPixels{ &pMemory[3 * (static_cast<int64_t>(yOffset) + x)] };
@@ -122,6 +121,14 @@ namespace Fractal
 			yPos += yScale;
 			yOffset += rowSize;
 		}
+
+		return true;
+	}
+
+	bool Application::CalculateFractalSectionAVX(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
+		const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, const int iterations, uint8_t* pMemory)
+	{
+
 
 		return true;
 	}
@@ -241,7 +248,7 @@ namespace Fractal
 			});
 	}
 
-	void Application::ChangeWorldScale(float scalingFactor)
+	void Application::ChangeWorldScale(double scalingFactor)
 	{
 		Point2D mouseCoordsBeforeZoom{ 0.0f, 0.0f }, mouseCoordsAfterZoom{ 0.0f, 0.0f };
 		ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);

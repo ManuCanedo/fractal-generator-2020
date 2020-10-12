@@ -19,6 +19,7 @@ project "fractal-generator"
     location ""
     kind "ConsoleApp"
     language "C++"
+    vectorextensions "avx2"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")

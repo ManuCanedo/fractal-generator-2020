@@ -28,7 +28,7 @@ namespace Fractal
 		dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event)
 			{
 				ImGuiIO& io = ImGui::GetIO();
-				io.MousePos = ImVec2(event.GetX(), event.GetY());
+				io.MousePos = ImVec2(static_cast<float>(event.GetX()), static_cast<float>(event.GetY()));
 				return false;
 			});
 

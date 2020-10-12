@@ -157,7 +157,7 @@ namespace Fractal
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-				MouseScrolledEvent event(static_cast<float>(offsetX), static_cast<float>(offsetY));
+				MouseScrolledEvent event(offsetX, offsetY);
 				data.fEventCallback(event);
 			});
 
@@ -165,7 +165,7 @@ namespace Fractal
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-				MouseMovedEvent event(static_cast<float>(positionX), static_cast<float>(positionY));
+				MouseMovedEvent event(positionX, positionY);
 				data.fEventCallback(event);
 			});
 	}

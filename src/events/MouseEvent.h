@@ -54,11 +54,11 @@ namespace Fractal
 	class MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(const float x, const float y)
+		MouseMovedEvent(const double x, const double y)
 			: m_MouseX(x), m_MouseY(y) {}
 
-		float GetX() const { return m_MouseX; }
-		float GetY() const { return m_MouseY; }
+		double GetX() const { return m_MouseX; }
+		double GetY() const { return m_MouseY; }
 
 		static EventType GetStaticType() { return EventType::MouseMoved; }
 
@@ -71,17 +71,17 @@ namespace Fractal
 		}
 
 	private:
-		float m_MouseX, m_MouseY;
+		double m_MouseX, m_MouseY;
 	};
 
 	class MouseScrolledEvent: public Event
 	{
 	public:
-		MouseScrolledEvent(const float xOffset, const float yOffset)
+		MouseScrolledEvent(const double xOffset, const double yOffset)
 			: m_OffsetX(xOffset), m_OffsetY(yOffset) {}
 
-		float GetOffsetX() const { return m_OffsetX; }
-		float GetOffsetY() const { return m_OffsetY; }
+		double GetOffsetX() const { return m_OffsetX; }
+		double GetOffsetY() const { return m_OffsetY; }
 
 		static EventType GetStaticType() { return EventType::MouseScrolled; }
 
@@ -94,7 +94,7 @@ namespace Fractal
 		}
 
 	private:
-		float m_OffsetX, m_OffsetY;
+		double m_OffsetX, m_OffsetY;
 	};
 }
 
