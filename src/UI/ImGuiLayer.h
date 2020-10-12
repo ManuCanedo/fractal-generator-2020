@@ -14,8 +14,8 @@ namespace Fractal
 		void OnEvent(Event& event);
 
 	private:
-		void DefineUI();
-		void Init();
-		void Shutdown();
+		inline void DefineApplicationUI();
+		inline void Init();
+		inline void Shutdown();
 	};
 }

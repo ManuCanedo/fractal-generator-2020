@@ -8,7 +8,7 @@ namespace Fractal
 {
 	Bitmap::Bitmap(int width, int height)
 		: m_Width(width), m_Height(height),
-		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height))) 
+		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height)))  
 	{
 	}
 

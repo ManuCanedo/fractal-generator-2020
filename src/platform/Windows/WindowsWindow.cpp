@@ -4,10 +4,12 @@
 #include "UI/ImGuiLayer.h"
 #include "WindowsWindow.h"
 
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
+
 namespace Fractal
 {
 	static bool s_GLFWInitialized = false;
-	WindowsWindow* WindowsWindow::s_pInstance{ nullptr };
 
 	Window* Window::Create(const WindowProperties& props)
 	{
@@ -16,7 +18,6 @@ namespace Fractal
 
 	WindowsWindow::WindowsWindow(const WindowProperties& props)
 	{
-		s_pInstance = this;
 		Init(props);
 	}
 
@@ -27,9 +28,14 @@ namespace Fractal
 
 	void WindowsWindow::OnUpdate()
 	{
-		m_pImGuiLayer->OnUpdate();
 		glfwPollEvents();
-		glfwSwapBuffers(m_pWindow);
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		m_ImGuiLayer->OnUpdate();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		glfwSwapBuffers(m_Window);
 	}
 
 	void WindowsWindow::SetEventCallback(std::function<void(Event&)> onEventFunction)
@@ -52,12 +58,14 @@ namespace Fractal
 
 	void WindowsWindow::Init(const WindowProperties& props)
 	{
+		// Window Setup
 		m_Data.Title = props.title;
 		m_Data.Width = props.width;
 		m_Data.Height = props.height;
 
-		LOG_INFO("Creating window {0} ({1}, {2})", props.title, props.width, props.height);
+		LOG_INFO("Window created: {0} ({1}, {2})", props.title, props.width, props.height);
 
+		// GLFW Setup
 		if (!s_GLFWInitialized)
 		{
 			glfwInit();
@@ -65,18 +73,21 @@ namespace Fractal
 		}
 
 		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-		m_pWindow = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_pWindow);
-		glfwSetWindowUserPointer(m_pWindow, &m_Data);
+		m_Window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
+		glfwMakeContextCurrent(m_Window);
+		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
+		// GLEW Setup
 		if (glewInit() != GLEW_OK) LOG_ERROR("GlewInit error");
 
-		// Set up ImGui
-		m_pImGuiLayer = std::make_unique<ImGuiLayer>();
+		// ImGui Setup
+		m_ImGuiLayer = std::make_unique<ImGuiLayer>();
+		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+		ImGui_ImplOpenGL3_Init("#version 410");
 
 		// GLFW Callbacks
-		glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 				data.Width = width;
@@ -86,7 +97,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetWindowCloseCallback(m_pWindow, [](GLFWwindow* window)
+		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -94,7 +105,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetKeyCallback(m_pWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -121,7 +132,7 @@ namespace Fractal
 				}
 			});
 
-		glfwSetMouseButtonCallback(m_pWindow, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -142,7 +153,7 @@ namespace Fractal
 				}
 			});
 
-		glfwSetScrollCallback(m_pWindow, [](GLFWwindow* window, double offsetX, double offsetY)
+		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double offsetX, double offsetY)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -150,7 +161,7 @@ namespace Fractal
 				data.fEventCallback(event);
 			});
 
-		glfwSetCursorPosCallback(m_pWindow, [](GLFWwindow* window, double positionX, double positionY)
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double positionX, double positionY)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -161,6 +172,8 @@ namespace Fractal
 
 	void WindowsWindow::Shutdown()
 	{
-		glfwDestroyWindow(m_pWindow);
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		glfwDestroyWindow(m_Window);
 	}
 }

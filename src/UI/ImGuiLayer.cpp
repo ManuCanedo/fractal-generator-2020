@@ -1,11 +1,6 @@
 #include "fpch.h"
 #include "Application.h"
 #include "ImGuiLayer.h"
-#include "Platform/Windows/WindowsWindow.h"
-
-#include <examples/imgui_impl_glfw.h>
-#include <examples/imgui_impl_opengl3.h>
-#include <GL/glew.h>
 
 namespace Fractal
 {
@@ -21,19 +16,9 @@ namespace Fractal
 
 	void ImGuiLayer::OnUpdate()
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::GetApplication();
-
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		DefineUI();
-		
+		DefineApplicationUI();
 		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void ImGuiLayer::OnEvent(Event& event)
@@ -62,37 +47,24 @@ namespace Fractal
 			});
 	}
 
-	void ImGuiLayer::Init()
+	void ImGuiLayer::DefineApplicationUI()
 	{
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
+		ImGui::SetNextWindowPos(ImVec2(1410, 20), ImGuiCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(165, 310), ImGuiCond_Once);
+		ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 
-		ImGuiIO& io{ ImGui::GetIO() }; (void)io;
-		WindowsWindow& window{ WindowsWindow::GetWindowsWindow() };
+		static Application& app{ Application::GetApplication() };
 
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-		ImGui::StyleColorsClassic();
-
-		ImGui_ImplGlfw_InitForOpenGL(window.GetWindowNative(), true);
-		ImGui_ImplOpenGL3_Init("#version 410");
-	}
-
-	void ImGuiLayer::Shutdown()
-	{
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-	}
-
-	void ImGuiLayer::DefineUI()
-	{
+		static float rOffsetDefault{ 0.0f }, gOffsetDefault{ 2.094f }, bOffsetDefault{ 4.188f };
 		static float rOffset{ 0.0f }, gOffset{ 2.094f }, bOffset{ 4.188f };
-		static bool bAVX{ false };
-		Application& app{ Application::GetApplication() };
+		static bool bAVX{ false }, bBinary{ false };
 
-		ImGui::Begin("Fractal Configuration");
-		
+		// Uncomment if GLFW Resize enabled
+		// ImGuiIO& io = ImGui::GetIO();
+		// io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+
+		ImGui::Begin("Settings", false, ImGuiWindowFlags_NoResize);
+
 		ImGui::Text("Color Settings");
 		ImGui::SliderFloat("Red", &rOffset, 0.0f, 6.28f);
 		ImGui::SliderFloat("Green", &gOffset, 0.0f, 6.28f);
@@ -100,23 +72,43 @@ namespace Fractal
 
 		if (ImGui::Button("Default"))
 		{
-			rOffset = 0.0f; 
-			gOffset = 2.094f; 
+			rOffset = 0.0f;
+			gOffset = 2.094f;
 			bOffset = 4.188f;
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Screenshot"))
+			app.SetScreenshot(true);
 
-		app.SetRGBOffset(rOffset, gOffset, bOffset);
+		ImGui::Text("");
 
-		ImGui::Text("------------------------------");
+		ImGui::Separator();
 		ImGui::Text("Performance");
-
 		ImGui::Text("%d Iterations", app.GetIterations());
 		ImGui::Text("Frametime %.2f ms", 1000.0f / ImGui::GetIO().Framerate);
 		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-		ImGui::Checkbox("AVX Mode", &bAVX);
+		ImGui::Checkbox(" AVX Mode", &bAVX);
 
-		app.SetAVX(bAVX);
+		ImGui::Text("");
+
+		ImGui::Text("Time Complexity");
+		ImGui::Checkbox(" Binary Search", &bBinary);
+
+		app.SetModeAVX(bAVX);
+		app.SetModeBinary(bBinary);
 
 		ImGui::End();
+	}
+
+	void ImGuiLayer::Init()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGui::StyleColorsClassic();
+	}
+
+	void ImGuiLayer::Shutdown()
+	{
+		ImGui::DestroyContext();
 	}
 }

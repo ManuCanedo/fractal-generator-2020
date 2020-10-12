@@ -15,20 +15,24 @@ namespace Fractal
 		void Update();
 		void OnEvent(Event& event);
 
-		void SetBinarySimulation(bool bBinary) { m_bBinarySearch = bBinary; }
-		void SetAVX(bool bAVX) { m_bAVX = bAVX; }
-		void SetRGBOffset(float r, float g, float b) { m_RGBOffset = { r, g, b }; }
+		void SetRedOffset(float val) { m_RGBOffset.x.exchange(val); }
+		void SetGreenOffset(float val) { m_RGBOffset.y.exchange(val); }
+		void SetBlueOffset(float val) { m_RGBOffset.z.exchange(val); }
 
-		Window& GetWindow() { return *m_pWindow; }
+		void SetModeAVX(bool val) { m_bAVX = val; }
+		void SetModeBinary(bool val) { m_bBinarySearch = val; }
+		void SetScreenshot(bool val) { m_bScreenshot = val; }
+
+		Window& GetWindow() { return *m_Window; }
 		int GetIterations() { return m_Iterations; }
 
 		static Application& GetApplication() { return *s_pInstance; }
 
 	private:
-		bool CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
+		bool CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
+			const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, int iterations, uint8_t* pPixels);
 		bool SaveFractal(const int width, const int height);
 		void ChangeWorldScale(float scalingFactor);
-
 		inline void ScreenToWorld(const Point2D& n, Point2D& v);
 
 	private:
@@ -36,27 +40,22 @@ namespace Fractal
 
 	private:
 		std::unique_ptr<uint8_t[]> m_pFractal{ nullptr };
-		std::unique_ptr<Window> m_pWindow{ nullptr };
+		std::unique_ptr<Window> m_Window{ nullptr };
 
-		int m_Iterations{ 128 }, m_Threads{ 32 };
+		const int m_Threads{ 32 };
 		std::vector<std::future<bool>> m_Futures;
 
-		Point2D m_Offset{ 0, 0 }, m_StartPan{ 0, 0 }, m_MouseCoords{ 0.0, 0.0 };
-		Point2D m_Scale;
+		// Fractal Generation
+		int m_Iterations{ 128 };
+		Point2D m_Offset{ 0, 0 }, m_StartPan{ 0, 0 }, m_MouseCoords{ 0.0, 0.0 }, m_Scale;
 
-		// ImGui
-		bool m_bBinarySearch{ false }, m_bAVX{ false }; // Not yet implemented
-		
-		struct Vec3f
-		{
-			float x, y, z;
-		} m_DynamicRGB{ 0.5f, 0.2f, 0.5f }, m_StaticRGB{ 0.5f, 0.5f, 0.5f }, m_RGBOffset{ 0.0f, 2.094f, 4.188f };
+		// Fractal Colouring
+		struct Vec3f { std::atomic<float> x, y, z; } m_RGBOffset{ 0.0f, 2.094f, 4.188f };
 
-
-		// Event
-		bool m_bRunning{ true }, m_bPanning{ false }, m_bScreenshot{ false };
+		// Update Flags
+		bool m_bAVX{ false }, m_bBinarySearch{ false }, m_bScreenshot{ false };
+		bool m_bRunning{ true }, m_bPanning{ false };
 		float m_ScalingFactor{ 1.0 };
-
 	};
 }
 

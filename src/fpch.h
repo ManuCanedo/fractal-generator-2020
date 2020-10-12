@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <memory>
+#include <atomic>
 #include <future>
 #include <functional>
 #include <iostream>
