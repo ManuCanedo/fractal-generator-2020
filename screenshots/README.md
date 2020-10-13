@@ -1,5 +1,13 @@
 # Screenshots
 
+13_10: More Fractals while developing AVX generation
+
+![Fractal](10_13_MoreFractals_0.jpg) 
+
+![Fractal](10_13_MoreFractals_1.jpg)
+
+![Fractal](10_13_MoreFractals_2.jpg)
+
 08_10: Higher Res pictures after implementing custom OpenGL renderer
 
 ![Fractal](10_08_Fractal_OpenGL_0.jpg) 

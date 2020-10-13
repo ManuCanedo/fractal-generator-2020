@@ -29,10 +29,10 @@ namespace Fractal
 		static Application& GetApplication() { return *s_pInstance; }
 
 	private:
-		bool CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
-			const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, int iterations, uint8_t* pPixels);
-		bool CalculateFractalSectionAVX(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
-			const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, int iterations, uint8_t* pPixels);
+		bool CalculateFractalSection(uint8_t* pPixels, const int width, int iterations, 
+			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
+		bool CalculateFractalSectionAVX(uint8_t* pPixels, const int width, int iterations, 
+			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
 		bool SaveFractal(const int width, const int height);
 		void ChangeWorldScale(double scalingFactor);
 		inline void ScreenToWorld(const Point2D& n, Point2D& v);

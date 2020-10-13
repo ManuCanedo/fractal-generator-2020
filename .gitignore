@@ -12,3 +12,4 @@ media/
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
+*.ini

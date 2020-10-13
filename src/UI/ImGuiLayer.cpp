@@ -70,11 +70,16 @@ namespace Fractal
 		ImGui::SliderFloat("Green", &gOffset, 0.0f, 6.28f);
 		ImGui::SliderFloat("Blue", &bOffset, 0.0f, 6.28f);
 
+		app.SetRedOffset(rOffset);
+		app.SetGreenOffset(gOffset);
+		app.SetBlueOffset(bOffset);
+
+
 		if (ImGui::Button("Default"))
 		{
-			rOffset = 0.0f;
-			gOffset = 2.094f;
-			bOffset = 4.188f;
+			rOffset = rOffsetDefault;
+			gOffset = gOffsetDefault;
+			bOffset = bOffsetDefault;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Screenshot"))
@@ -87,7 +92,7 @@ namespace Fractal
 		ImGui::Text("%d Iterations", app.GetIterations());
 		ImGui::Text("Frametime %.2f ms", 1000.0f / ImGui::GetIO().Framerate);
 		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-		ImGui::Checkbox(" AVX Mode", &bAVX);
+		ImGui::Checkbox(" AVX ", &bAVX);
 
 		ImGui::Text("");
 

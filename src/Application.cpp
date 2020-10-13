@@ -46,6 +46,7 @@ namespace Fractal
 		double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
 		int iters{ m_Iterations };
 
+
 		if (m_bBinarySearch) // Binary Search Simulation Mode 
 			iters = static_cast<int>(log2(iters));
 
@@ -53,33 +54,36 @@ namespace Fractal
 		{
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
+					m_pFractal.get(), m_Window->GetWidth(), iters,
 					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
 					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
-					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y),
-					m_Window->GetWidth(), iters, m_pFractal.get());
+					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
 		}
 		else // AVX Fractal Calculation Mode
 		{
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSectionAVX, this,
+					m_pFractal.get(), m_Window->GetWidth(), iters,
 					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
 					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
-					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y),
-					m_Window->GetWidth(), iters, m_pFractal.get());
+					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
 		}
 
 		if (m_bScreenshot) // Save Screenshot
 			m_bScreenshot = !SaveFractal(m_Window->GetWidth(), m_Window->GetHeight());
 
-		for (auto& f : m_Futures) f.wait();
+		for (auto&& f : m_Futures)
+			f.wait();
+
 		glDrawPixels(m_Window->GetWidth(), m_Window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
+
 		m_Window->OnUpdate();
 	}
 
-	bool Application::CalculateFractalSection(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
-		const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, const int iterations, uint8_t* pMemory)
+	bool Application::CalculateFractalSection(uint8_t* pMemory, const int width, const int iterations, 
+		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
@@ -125,10 +129,10 @@ namespace Fractal
 		return true;
 	}
 
-	bool Application::CalculateFractalSectionAVX(const Point2D&& pixTopLeft, const Point2D&& pixBottomRight,
-		const Point2D&& fractTopLeft, const Point2D&& fractBottomRight, const int width, const int iterations, uint8_t* pMemory)
+	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, const int width, const int iterations,
+		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
-
+		// Under development
 
 		return true;
 	}
