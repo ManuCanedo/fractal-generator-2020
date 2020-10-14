@@ -1,4 +1,11 @@
 # Screenshots
+
+14_10: Screenshots shared by Chopito12
+
+![Fractal](Fractal_Screenshot_User2.jpg)  
+
+![Fractal](Fractal_Screenshot_User0.jpg)  
+
 14_10: Rendering bugged while implementing AVX2
 
 ![Fractal](10_14_ImplementingAVX2.jpg) 
