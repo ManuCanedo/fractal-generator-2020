@@ -25,10 +25,9 @@ Engine Progress checklist:
 + (Dev Tool) Memory Allocation tracker 
 + (Dev Tool) Using precompiled headers
 + Fractal algorithm **multithreading**
-+ GLFW and OpenGL (GLEW) integration (replacing Pixel Engine)
++ GLFW and OpenGL (GLEW) integration (Pixel Engine replaced)
 + Window Abstraction and **platform specific Window implementation** for Windows
 + Custom **Event Manager**
-+ Removed Support for Pixel Engine
 + **ImGui** Layer Abstraction and platform specific implementation
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
 + -In Progress- Checking AVX2 CPU support during execution.
