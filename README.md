@@ -31,6 +31,7 @@ Engine Progress checklist:
 + Removed Support for Pixel Engine
 + **ImGui** Layer Abstraction and platform specific implementation
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
++ -In Progress- Checking AVX2 CPU support during execution.
 
 
 Fractal Application Progress checklist:
