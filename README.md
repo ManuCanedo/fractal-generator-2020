@@ -18,7 +18,7 @@ You can either clone the repository and generate the project with GenerateProjec
 
 Expand the *Settings* interface to play around with the colouring and other configurations.<br/>
 
-[Binaries](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
+[Executable](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
 [Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/screenshots) 
 
