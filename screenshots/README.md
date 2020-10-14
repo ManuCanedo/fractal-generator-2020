@@ -18,8 +18,6 @@
 
 08_10: Higher Res pictures after implementing custom OpenGL renderer
 
-![Fractal](10_08_Fractal_OpenGL_0.jpg) 
-
 ![Fractal](10_08_Fractal_OpenGL_1.jpg) 
 
 03_10: Fractal screenshots taken by the "Take Screenshot functionality".   
