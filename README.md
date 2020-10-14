@@ -14,9 +14,9 @@ Use UP and DOWN to zoom in and out to the cursor location. Use LEFT and RIGHT to
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
 [Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/screenshots) 
 
-## Development progress
+## Development Checklist
 
-Engine Progress checklist:
+Engine progress:
 + **Application Engine** set up
 + (Dev Tool) Logger implemented  
 + (Dev Tool) Function Timer implemented
@@ -33,7 +33,7 @@ Engine Progress checklist:
 + -In Progress- Checking AVX2 CPU support during execution.
 
 
-Fractal Application Progress checklist:
+Fractal application progress:
 + Bitmap Images Generation
 + **Mandelbrot Fractal Generation**
 + Histogram Colouring
