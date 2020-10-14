@@ -1,12 +1,13 @@
 # Screenshots
+14_10: Rendering bugged while implementing AVX2
+
+![Fractal](10_14_ImplementingAVX2.jpg) 
 
 13_10: More Fractals while developing AVX generation
 
 ![Fractal](10_13_MoreFractals_0.jpg) 
 
 ![Fractal](10_13_MoreFractals_1.jpg)
-
-![Fractal](10_13_MoreFractals_2.jpg)
 
 08_10: Higher Res pictures after implementing custom OpenGL renderer
 
