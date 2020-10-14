@@ -17,30 +17,31 @@ Use UP and DOWN to zoom in and out to the cursor location. Use LEFT and RIGHT to
 ## Development progress
 
 Engine Progress checklist:
-+ Application Engine set up
-+ Logger implemented  
-+ Function Timer implemented
-+ Project generation through Premake
-+ Pixel Engine Integration
-+ Memory Allocations tracker implemented 
-+ Using precompiled headers
-+ Fractal algorithm multithreading
-+ Started GLFW and OpenGL (GLEW) integration (replacing Pixel Engine)
-+ Window Abstraction and platform specific Window implementation for Windows (GLFW)
-+ Custom Event Manager
-+ ImGui Layer Abstraction and platform specific implementation (OpenGL)
-+ -In Progress- Fractal Generation using AVX2 vector extensions (Compiler Intrinsics)
++ **Application Engine** set up
++ (Dev Tool) Logger implemented  
++ (Dev Tool) Function Timer implemented
++ (Dev Tool) Project generation generation using Premake
++ (Dev Tool) Pixel Engine Integration
++ (Dev Tool) Memory Allocation tracker 
++ (Dev Tool) Using precompiled headers
++ Fractal algorithm **multithreading**
++ GLFW and OpenGL (GLEW) integration (replacing Pixel Engine)
++ Window Abstraction and **platform specific Window implementation** for Windows
++ Custom **Event Manager**
++ Removed Support for Pixel Engine
++ **ImGui** Layer Abstraction and platform specific implementation
++ Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
 
 
 Fractal Application Progress checklist:
 + Bitmap Images Generation
-+ Mandelbrot Fractal Generation
++ **Mandelbrot Fractal Generation**
 + Histogram Colouring
 + Static zoom application
-+ Real Time Fractal Generation
++ **Real Time Fractal Generation**
 + Real Time Sinusoidal Colouring
-+ Screenshots
-+ GUI
++ **Screenshots**
++ **UI** and fractal configuration in real time
 
 
 ## Stay in touch
