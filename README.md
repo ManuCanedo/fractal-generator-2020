@@ -9,10 +9,10 @@ The Mandelbrot fractal is a psichodelic mathematically-generated image that is s
 You can either clone the repository and generate the project with GenerateProject.bat or directly access the lastest binaries.<br/>
 
 *MOUSE WHEEL BUTTON* (click and drag): --- move around the Fractal.  
-*UP* and *DOWN* keys:   -------------------- zoom in and out.  
-*LEFT* and *RIGHT* keys:   ----------------- decrease or increase the fractal detail level.  
-*SPACEBAR*: ------------------------------ take a screenshot.  
-*ESC*: ----------------------------------- quit the application.<br/>
+*UP* and *DOWN* keys: --- zoom in and out.  
+*LEFT* and *RIGHT* keys: --- decrease or increase the fractal detail level.  
+*SPACEBAR*: --- take a screenshot.  
+*ESC*: --- quit the application.<br/>
 
 Expand the *Settings* interface to play around with the colouring and the fractal generation configuration.<br/>
 
