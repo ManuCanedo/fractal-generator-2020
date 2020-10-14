@@ -29,11 +29,11 @@ namespace Fractal
 		static Application& GetApplication() { return *s_pInstance; }
 
 	private:
-		bool CalculateFractalSection(uint8_t* pPixels, const int width, int iterations, 
+		bool CalculateFractalSection(uint8_t* pPixels, int width, int iterations, 
 			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
-		bool CalculateFractalSectionAVX(uint8_t* pPixels, const int width, int iterations, 
+		bool CalculateFractalSectionAVX(uint8_t* pPixels, int width, int iterations, 
 			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
-		bool SaveFractal(const int width, const int height);
+		bool SaveFractal(int width, int height);
 		void ChangeWorldScale(double scalingFactor);
 		inline void ScreenToWorld(const Point2D& n, Point2D& v);
 
@@ -44,15 +44,15 @@ namespace Fractal
 		std::unique_ptr<uint8_t[]> m_pFractal{ nullptr };
 		std::unique_ptr<Window> m_Window{ nullptr };
 
-		const int m_Threads{ 32 };
+		const int m_Threads{ 16 };
 		std::vector<std::future<bool>> m_Futures;
 
 		// Fractal Generation
-		int m_Iterations{ 128 };
+		int m_Iterations{ 256 };
 		Point2D m_Offset{ 0.0, 0.0 }, m_StartPan{ 0.0, 0.0 }, m_MouseCoords{ 0.0, 0.0 }, m_Scale;
 
 		// Fractal Colouring
-		struct Vec3f { std::atomic<float> x, y, z; } m_RGBOffset{ 0.0f, 2.094f, 4.188f };
+		struct Vec3f { std::atomic<float> x, y, z; } m_RGBOffset{ 0.3f, 2.4f, 4.0f };
 
 		// Update Flags
 		bool m_bAVX{ false }, m_bBinarySearch{ false }, m_bScreenshot{ false };

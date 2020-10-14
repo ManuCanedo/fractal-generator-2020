@@ -82,7 +82,7 @@ namespace Fractal
 		m_Window->OnUpdate();
 	}
 
-	bool Application::CalculateFractalSection(uint8_t* pMemory, const int width, const int iterations, 
+	bool Application::CalculateFractalSection(uint8_t* pMemory, int width, int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
@@ -106,7 +106,7 @@ namespace Fractal
 						2 * z.real() * z.imag() + c.imag() };
 				}
 
-				uint8_t* pPixels{ &pMemory[3 * (static_cast<int64_t>(yOffset) + x)] };
+				uint8_t* pPixels{ pMemory + 3 * (static_cast<int64_t>(yOffset) + x) };
 				uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
 
 				if (n < iterations)
@@ -129,15 +129,113 @@ namespace Fractal
 		return true;
 	}
 
-	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, const int width, const int iterations,
+	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, int width, int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
-		// Under development
+		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
+		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
+
+		double yPos{ fractTopLeft.y };
+		int rowSize{ width }, yOffset{ 0 };
+		int x, y;
+
+		/* ----------     ----------     ----------     ---------- */
+		/* ----------            Intrinsics             ---------- */
+		/* ----------     ----------     ----------     ---------- */
+
+		// Double Registers
+		__m256d _zr, _zi, _zr2, _zi2, _cr, _ci, _auxDouble1, _auxDouble2, _maskDouble;
+		__m256d _two{ _mm256_set1_pd(2.0) }, _four{ _mm256_set1_pd(4.0) };
+		__m256d _xScale{ _mm256_set1_pd(xScale) }, _xSkip{ _mm256_set1_pd(xScale * 4) };
+		__m256d _xPos, _xPosOffset{ _mm256_mul_pd(_mm256_set_pd(0, 1, 2, 3), _xScale) };
+
+		// Int Registers
+		__m256i _n, _maskInt, _auxInt;
+		__m256i _one{ _mm256_set1_epi64x(1) }, _iters{ _mm256_set1_epi64x(iterations) };
+
+		for (y = pixTopLeft.y; y < pixBottomRight.y; y++)
+		{
+			_auxDouble1 = _mm256_set1_pd(fractTopLeft.x); //a?
+			_xPos = _mm256_add_pd(_auxDouble1, _xPosOffset);
+			_ci = _mm256_set1_pd(yPos);
+
+			for (x = pixTopLeft.x; x < pixBottomRight.x; x += 4)
+			{
+				//std::complex<double> z{ 0.0, 0.0 };
+				_zr = _mm256_setzero_pd();
+				_zi = _mm256_setzero_pd();
+				//std::complex<double> c{ xPos, yPos };
+				_cr = _xPos;
+
+				//int n{ 0 };
+				_n = _mm256_setzero_si256();
+
+				//while ()
+			repeat:
+				// z.real() = z.real() * z.real() - z.imag() * z.imag() + c.real()
+				_zr2 = _mm256_mul_pd(_zr, _zr);
+				_zi2 = _mm256_mul_pd(_zi, _zi);
+
+				_auxDouble1 = _mm256_sub_pd(_zr2, _zi2);
+				_auxDouble2 = _mm256_mul_pd(_zr, _zi);
+				_zr = _mm256_add_pd(_auxDouble1, _cr);
+				_zi = _mm256_fmadd_pd(_auxDouble2, _two, _ci);
+
+				//  z.real() * z.real() + z.imag() * z.imag() < 4
+				_auxDouble1 = _mm256_add_pd(_zr2, _zi2);
+				_maskDouble = _mm256_cmp_pd(_auxDouble1, _four, _CMP_LT_OQ);
+				
+				// iterations > n
+				_maskInt = _mm256_cmpgt_epi64(_iters, _n);
+
+				// (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iterations)
+				_maskInt = _mm256_and_si256(_maskInt, _mm256_castpd_si256(_maskDouble));
+
+				// ++n
+				_auxInt = _mm256_and_si256(_one, _maskInt);
+				_n = _mm256_add_epi64(_n, _auxInt);
+
+				// If the condition is true, keeps iterating
+				if (_mm256_movemask_pd(_mm256_castsi256_pd(_maskInt)) > 0)
+					goto repeat;
+
+				_xPos = _mm256_add_pd(_xPos, _xSkip);
+
+				/* ----------     ----------     ----------     ---------- */
+				/* ----------        End of Intrinsics          ---------- */
+				/* ----------     ----------     ----------     ---------- */
+
+				uint8_t* pPixels{ &pMemory[3 * (static_cast<int64_t>(yOffset) + x)] };
+				uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
+				int n;
+
+				for (int i = 3; i >= 0; --i)
+				{
+					red = green = blue = 0;
+
+					// reg _n contains [pix3 n][pix2 n][pix1 n][pix0 n]
+					n = int(_n.m256i_i64[i]);
+					if (n < iterations)
+					{
+						red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + 0.5));
+						green = static_cast<uint8_t>	(256 * (0.2 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.y) + 0.5));
+						blue = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.z) + 0.5));
+					}
+
+					pPixels[0] = red;
+					pPixels[1] = green;
+					pPixels[2] = blue;
+					pPixels += 3;
+				}
+			}
+			yPos += yScale;
+			yOffset += rowSize;
+		}
 
 		return true;
 	}
 
-	bool Application::SaveFractal(const int width, const int height)
+	bool Application::SaveFractal(int width, int height)
 	{
 		static int index{ 0 };
 

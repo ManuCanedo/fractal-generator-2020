@@ -46,9 +46,9 @@ namespace Fractal
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		if (enabled)
-			glfwSwapInterval(1);
-		else
 			glfwSwapInterval(0);
+		else
+			glfwSwapInterval(1);
 	}
 
 	bool WindowsWindow::IsVSync() const
@@ -76,7 +76,7 @@ namespace Fractal
 		m_Window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		SetVSync(false);
 
 		// GLEW Setup
 		if (glewInit() != GLEW_OK) LOG_ERROR("GlewInit error");

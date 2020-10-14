@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <math.h>
+#include <immintrin.h>
 #include <cstdint>
 #include <complex>
 

@@ -55,7 +55,7 @@ namespace Fractal
 
 		static Application& app{ Application::GetApplication() };
 
-		static float rOffsetDefault{ 0.0f }, gOffsetDefault{ 2.094f }, bOffsetDefault{ 4.188f };
+		static float rOffsetDefault{ 0.3f }, gOffsetDefault{ 2.4f }, bOffsetDefault{ 4.0f };
 		static float rOffset{ 0.0f }, gOffset{ 2.094f }, bOffset{ 4.188f };
 		static bool bAVX{ false }, bBinary{ false };
 
