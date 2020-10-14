@@ -4,7 +4,7 @@ The Mandelbrot fractal is a psichodelic mathematically-generated image that is s
 
 An UI offers you the possibility to modify the fractal colours and apply other performance settings. In addition, a fixed preset allows you to visuallise the Time Complexity of the Binary Search algorithm and compare it with the corresponding complexity of the fractal.
 
-![Fractal](screenshots/10_03_Fractal_World_1.jpg)
+![Fractal](screenshots/Fractal_Screenshot_User2.jpg)
 
 ## Getting Started
 
