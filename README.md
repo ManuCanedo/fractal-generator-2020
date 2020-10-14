@@ -1,6 +1,6 @@
 # Welcome to Fractal Generator - A real-time fractal world explorer
 
-The Mandelbrot fractal is a psichodelic mathematically-generated image that is self-like through different scales. The user will be able to zoom in and out through the fractal in order to explore it. In the upcoming future the application will integrate a GUI that will provide the user with the possibility of modifying the colouring of the fractal and applying different presets. These presets will allow the user to visualize and compare the Time Complexity of some of the most popular computer science algorithms (e.g. binary search, euclidean algorithm, Huffman algorithm, Djiistra...).
+The Mandelbrot fractal is a psichodelic mathematically-generated image that is self-like through different scales. Zoom in and out on the fractal to explore it! You can gradually apply a maximum zoom of around 1: 10^300 discovering countless fractal underworlds in the process. A UI offers you the possibility to modify the fractal colours and apply other performance settings. In addition, a fixed preset allows you to visuallise the Time Complexity of the Binary Search algorithm and compare it with the corresponding complexity of the fractal-generating algorithm.
 
 ![Fractal](screenshots/10_03_Fractal_World_1.jpg)
 
@@ -8,13 +8,13 @@ The Mandelbrot fractal is a psichodelic mathematically-generated image that is s
 
 You can either clone the repository and generate the project with GenerateProject.bat or directly access the lastest binaries.<br/>
 
-*MOUSE WHEEL BUTTON* (click and drag) ----- move around the Fractal.  
-*UP* and *DOWN* keys ----- zoom in and out.  
-*LEFT* and *RIGHT* keys ----- decrease or increase the fractal detail level.  
-*SPACEBAR* key ----- take a screenshot.  
-*ESC* key ----- quit the application.<br/>
+*MOUSE WHEEL BUTTON* (click and drag) ----- to move around the Fractal.  
+*UP* and *DOWN* keys ----- to zoom in and out.  
+*LEFT* and *RIGHT* keys ----- to decrease or increase the fractal detail level.  
+*SPACEBAR* key ----- to take a screenshot.  
+*ESC* key ----- to quit the application.<br/>
 
-Expand the *Settings* interface to play around with the colouring and the fractal generation configuration.<br/>
+Expand the *Settings* interface to play around with the colouring and other configurations.<br/>
 
 [Binaries](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
