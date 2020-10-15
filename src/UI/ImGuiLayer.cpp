@@ -55,13 +55,9 @@ namespace Fractal
 
 		static Application& app{ Application::GetApplication() };
 
-		static float rOffsetDefault{ 0.3f }, gOffsetDefault{ 2.4f }, bOffsetDefault{ 4.0f };
+		static float rOffsetDefault{ 0.0f }, gOffsetDefault{ 2.094f }, bOffsetDefault{ 4.188f };
 		static float rOffset{ 0.0f }, gOffset{ 2.094f }, bOffset{ 4.188f };
-		static bool bAVX{ false }, bBinary{ false };
-
-		// Uncomment if GLFW Resize enabled
-		// ImGuiIO& io = ImGui::GetIO();
-		// io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		static bool bAVX{ true }, bBinary{ false };
 
 		ImGui::Begin("Settings", false, ImGuiWindowFlags_NoResize);
 
@@ -73,7 +69,6 @@ namespace Fractal
 		app.SetRedOffset(rOffset);
 		app.SetGreenOffset(gOffset);
 		app.SetBlueOffset(bOffset);
-
 
 		if (ImGui::Button("Default"))
 		{
@@ -92,7 +87,7 @@ namespace Fractal
 		ImGui::Text("%d Iterations", app.GetIterations());
 		ImGui::Text("Frametime %.2f ms", 1000.0f / ImGui::GetIO().Framerate);
 		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-		ImGui::Checkbox(" AVX ", &bAVX);
+		ImGui::Checkbox(" AVX2 ", &bAVX);
 
 		ImGui::Text("");
 

@@ -3,6 +3,9 @@
 #include "Bitmap.h"
 #include "tools/AllocationTracker.h"
 
+// CPU Info
+#include "Tools/CPUFeatures.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Fractal
@@ -12,24 +15,29 @@ namespace Fractal
 
 	// Ez-tweak globals. Only used in constructor below
 	constexpr char* NAME = "Fractal Explorer";
-	constexpr int WIDTH{ 1600 }, HEIGHT{ 900 };
+	constexpr unsigned int WIDTH{ 1600 }, HEIGHT{ 900 };
 
 	Application::Application() : m_Futures(m_Threads), m_Scale({ WIDTH / 2, HEIGHT })
 	{
 		Timer timer;
 		s_pInstance = this;
 
+		std::future<int> fut = std::async(std::launch::async, &SupportsIntelVectorExtensions);
+		
 		m_Window = std::unique_ptr<Window>(Window::Create({ NAME, WIDTH, HEIGHT }));
 		m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 		m_pFractal = std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(m_Window->GetWidth()) * m_Window->GetHeight());
+		m_bSupportedAVX2 = fut.get();
 	}
 
-	void Application::Run()
+	unsigned int Application::Run()
 	{
 		while (m_bRunning)
 		{
 			Update();
 		}
+
+		return m_FrameCount;
 	}
 
 	void Application::Update()
@@ -44,23 +52,18 @@ namespace Fractal
 
 		double scrSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
 		double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
-		int iters{ m_Iterations };
-
+		unsigned int iters{ m_Iterations };
 
 		if (m_bBinarySearch) // Binary Search Simulation Mode 
-			iters = static_cast<int>(log2(iters));
+			iters = static_cast<unsigned int>(log2(iters));
 
-		if (!m_bAVX) // Standard Fractal Calculation Mode
+		if (m_FrameCount++) // Skipping first frame to optimize multithreading
 		{
-			for (size_t i = 0; i < m_Threads; ++i)
-				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
-					m_pFractal.get(), m_Window->GetWidth(), iters,
-					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
-					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
-					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
-					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
+			for (auto&& f : m_Futures) f.wait();
+			glDrawPixels(m_Window->GetWidth(), m_Window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
 		}
-		else // AVX Fractal Calculation Mode
+
+		if (m_bAVX2 && m_bSupportedAVX2) // AVX Fractal Calculation Mode
 		{
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSectionAVX, this,
@@ -70,26 +73,32 @@ namespace Fractal
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
 		}
+		else // Standard Fractal Calculation Mode
+		{
+			for (size_t i = 0; i < m_Threads; ++i)
+				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
+					m_pFractal.get(), m_Window->GetWidth(), iters,
+					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
+					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
+					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
+					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
+
+		}
 
 		if (m_bScreenshot) // Save Screenshot
-			m_bScreenshot = !SaveFractal(m_Window->GetWidth(), m_Window->GetHeight());
-
-		for (auto&& f : m_Futures)
-			f.wait();
-
-		glDrawPixels(m_Window->GetWidth(), m_Window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
+			SaveFractal();
 
 		m_Window->OnUpdate();
 	}
 
-	bool Application::CalculateFractalSection(uint8_t* pMemory, int width, int iterations,
+	bool Application::CalculateFractalSection(uint8_t* pMemory, unsigned int width, unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
 		double xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
-		int rowSize{ width }, yOffset{ 0 };
+		unsigned int rowSize{ width }, yOffset{ 0 };
 
 		for (int y = static_cast<int>(pixTopLeft.y); y < pixBottomRight.y; ++y)
 		{
@@ -98,7 +107,7 @@ namespace Fractal
 			{
 				std::complex<double> z{ 0.0, 0.0 };
 				std::complex<double> c{ xPos, yPos };
-				int n{ 0 };
+				unsigned int n{ 0 };
 
 				while (z.real() * z.real() + z.imag() * z.imag() < 4 && ++n < iterations)
 				{
@@ -129,15 +138,15 @@ namespace Fractal
 		return true;
 	}
 
-	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, int width, int iterations,
+	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, unsigned int width, unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
 		double yPos{ fractTopLeft.y };
-		int rowSize{ width }, yOffset{ 0 };
-		int x, y;
+		unsigned int rowSize{ width }, yOffset{ 0 };
+		unsigned int x, y;
 
 		/* ----------     ----------     ----------     ---------- */
 		/* ----------            Intrinsics             ---------- */
@@ -153,13 +162,13 @@ namespace Fractal
 		__m256i _n, _maskInt, _auxInt;
 		__m256i _one{ _mm256_set1_epi64x(1) }, _iters{ _mm256_set1_epi64x(iterations) };
 
-		for (y = pixTopLeft.y; y < pixBottomRight.y; y++)
+		for (y = static_cast<unsigned int>(pixTopLeft.y); y < pixBottomRight.y; y++)
 		{
-			_auxDouble1 = _mm256_set1_pd(fractTopLeft.x); //a?
+			_auxDouble1 = _mm256_set1_pd(fractTopLeft.x);
 			_xPos = _mm256_add_pd(_auxDouble1, _xPosOffset);
 			_ci = _mm256_set1_pd(yPos);
 
-			for (x = pixTopLeft.x; x < pixBottomRight.x; x += 4)
+			for (x = static_cast<unsigned int>(pixTopLeft.x); x < pixBottomRight.x; x += 4)
 			{
 				//std::complex<double> z{ 0.0, 0.0 };
 				_zr = _mm256_setzero_pd();
@@ -184,7 +193,7 @@ namespace Fractal
 				//  z.real() * z.real() + z.imag() * z.imag() < 4
 				_auxDouble1 = _mm256_add_pd(_zr2, _zi2);
 				_maskDouble = _mm256_cmp_pd(_auxDouble1, _four, _CMP_LT_OQ);
-				
+
 				// iterations > n
 				_maskInt = _mm256_cmpgt_epi64(_iters, _n);
 
@@ -207,14 +216,14 @@ namespace Fractal
 
 				uint8_t* pPixels{ &pMemory[3 * (static_cast<int64_t>(yOffset) + x)] };
 				uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
-				int n;
+				unsigned int n;
 
 				for (int i = 3; i >= 0; --i)
 				{
 					red = green = blue = 0;
 
 					// reg _n contains [pix3 n][pix2 n][pix1 n][pix0 n]
-					n = int(_n.m256i_i64[i]);
+					n = static_cast<unsigned int>(int(_n.m256i_i64[i]));
 					if (n < iterations)
 					{
 						red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + 0.5));
@@ -235,23 +244,22 @@ namespace Fractal
 		return true;
 	}
 
-	bool Application::SaveFractal(int width, int height)
+	void Application::SaveFractal()
 	{
-		static int index{ 0 };
+		static uint8_t index{ 0 };
+		unsigned int width{ m_Window->GetWidth() }, height{ m_Window->GetHeight() };
 
 		Timer timer;
 		Bitmap image(width, height);
-
 		{
 			std::lock_guard<std::mutex> lock(s_Mutex);
-			for (int y = 0; y < height; ++y)
-				for (int x = 0; x < width; ++x)
+			for (size_t y = 0; y < height; ++y)
+				for (size_t x = 0; x < width; ++x)
 				{
 					uint8_t* pPixel = &m_pFractal[3 * (y * static_cast<int64_t>(width) + x)];
 					image.SetPixel(x, y, pPixel[0], pPixel[1], pPixel[2]);
 				}
 		}
-
 		std::string fileName("Fractal_Screenshot_");
 		fileName.append(std::to_string(index++));
 		fileName.append(".bmp");
@@ -260,7 +268,6 @@ namespace Fractal
 		LOG_INFO("Screenshot saved as {0}", fileName);
 
 		m_bScreenshot = false;
-		return true;
 	}
 
 	void Application::OnEvent(Event& event)

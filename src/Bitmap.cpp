@@ -12,10 +12,10 @@ namespace Fractal
 	{
 	}
 
-	void Bitmap::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
+	void Bitmap::SetPixel(uint64_t x, uint64_t y, uint8_t red, uint8_t green, uint8_t blue)
 	{
 		auto pPixel{ m_pPixels.get() };
-		pPixel += 3 * static_cast<int64_t>(y) * m_Width + 3 * static_cast<int64_t>(x);
+		pPixel += 3 * y * m_Width + 3 * x;
 		pPixel[0] = blue; pPixel[1] = green; pPixel[2] = red;
 	}
 

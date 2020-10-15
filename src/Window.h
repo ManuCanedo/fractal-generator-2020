@@ -21,8 +21,8 @@ namespace Fractal
 	struct WindowProperties
 	{
 		std::string title{ "Fractal Explorer" };
-		int width{ 1600 };
-		int height{ 900 };
+		unsigned int width{ 1600 };
+		unsigned int height{ 900 };
 	};
 
 	class Window
@@ -32,8 +32,8 @@ namespace Fractal
 
 		virtual void OnUpdate() = 0;
 
-		virtual int GetWidth() const = 0;
-		virtual int GetHeight() const = 0;
+		virtual unsigned int GetWidth() const = 0;
+		virtual unsigned int GetHeight() const = 0;
 
 		virtual void SetEventCallback(const std::function<void(Event&)>) = 0;
 		virtual void SetVSync(bool enabled) = 0;

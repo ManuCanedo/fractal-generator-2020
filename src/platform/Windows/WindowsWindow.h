@@ -13,8 +13,8 @@ namespace Fractal
 
 		void OnUpdate() override;
 
-		int GetWidth() const override { return m_Data.Width; }
-		int GetHeight() const override { return m_Data.Height; }
+		unsigned int GetWidth() const override { return m_Data.Width; }
+		unsigned int GetHeight() const override { return m_Data.Height; }
 
 		void SetEventCallback(std::function<void(Event&)>) override;
 		void SetVSync(bool enabled) override; 
@@ -31,7 +31,7 @@ namespace Fractal
 		struct WindowData
 		{
 			std::string Title;
-			int Width, Height;
+			unsigned int Width, Height;
 			bool VSync;
 
 			std::function<void(Event&)> fEventCallback;

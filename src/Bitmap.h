@@ -8,7 +8,7 @@ namespace Fractal
 		Bitmap(int width, int height);
 		~Bitmap() = default;
 
-		void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+		void SetPixel(uint64_t x, uint64_t y, uint8_t red, uint8_t green, uint8_t blue);
 		bool Write(std::string filename);
 
 	private:
