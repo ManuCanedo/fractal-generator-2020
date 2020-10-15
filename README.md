@@ -30,7 +30,7 @@ Engine progress:
 + (Dev Tool) Function Timer implemented
 + (Dev Tool) Project generation generation using Premake
 + (Dev Tool) Pixel Engine Integration
-+ (Dev Tool) Memory Allocation tracker 
++ (Dev Tool) Memory Allocations tracker 
 + (Dev Tool) Using precompiled headers
 + Fractal algorithm **multithreading**
 + GLFW and OpenGL (GLEW) integration (Pixel Engine replaced)
