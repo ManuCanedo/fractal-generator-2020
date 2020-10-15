@@ -10,11 +10,11 @@ An UI offers you the possibility to modify the fractal colours and apply other p
 
 You can either clone the repository and generate the project with GenerateProject.bat or directly access the lastest binaries.<br/>
 
-*MOUSE WHEEL BUTTON* (click and drag) ----- to move around the Fractal.  
-*UP* and *DOWN* keys ----- to zoom in and out.  
-*LEFT* and *RIGHT* keys ----- to decrease or increase the fractal detail level.  
-*SPACEBAR* key ----- to take a screenshot.  
-*ESC* key ----- to quit the application.<br/>
+*MOUSE WHEEL BUTTON* (click and drag) ----- move around the Fractal.  
+*UP* and *DOWN* keys ----- zoom in and out.  
+*LEFT* and *RIGHT* keys ----- decrease or increase the fractal detail level.  
+*SPACEBAR* key ----- take a screenshot.  
+*ESC* key ----- quit the application.<br/>
 
 Expand the *Settings* interface to play around with the colouring and other configurations.<br/>
 
@@ -38,7 +38,8 @@ Engine progress:
 + Custom **Event Manager**
 + **ImGui** Layer Abstraction and platform specific implementation
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
-+ -In Progress- Checking AVX2 CPU support during execution.
++ (Dev Tool) CPU Features analizer tool implemented
++ Checking CPU support for AVX2 instructions at launch
 
 
 Fractal application progress:
