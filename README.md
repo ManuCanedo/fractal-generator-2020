@@ -38,7 +38,7 @@ Engine progress:
 + Custom **Event Manager**
 + **ImGui** Layer Abstraction and platform specific implementation
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
-+ (Dev Tool) CPU Features check implemented
++ (Dev Tool) CPU SIMD Features check implemented
 + Checking CPU support for AVX2 instructions at launch
 
 
