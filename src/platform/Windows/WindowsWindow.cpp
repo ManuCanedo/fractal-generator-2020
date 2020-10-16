@@ -51,11 +51,6 @@ namespace Fractal
 			glfwSwapInterval(1);
 	}
 
-	bool WindowsWindow::IsVSync() const
-	{
-		return m_Data.VSync;
-	}
-
 	void WindowsWindow::Init(const WindowProperties& props)
 	{
 		// Window Setup

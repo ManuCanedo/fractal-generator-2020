@@ -24,18 +24,18 @@ namespace Fractal
 		void SetScreenshot(bool val) { m_bScreenshot = val; }
 
 		Window& GetWindow() { return *m_Window; }
-		int GetIterations() { return m_Iterations; }
+		constexpr int GetIterations() { return m_Iterations; }
 
 		static Application& GetApplication() { return *s_pInstance; }
 
 	private:
-		bool CalculateFractalSection(uint8_t* pPixels, unsigned int width, unsigned int iterations,
+		bool CalculateFractalSection(uint8_t* pPixels, const unsigned int width, const unsigned int iterations,
 			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
 		bool CalculateFractalSectionAVX(uint8_t* pPixels, unsigned int width, unsigned int iterations,
 			const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight);
 		void SaveFractal();
 
-		void ChangeWorldScale(double scalingFactor);
+		void ChangeWorldScale(const double scalingFactor);
 		inline void ScreenToWorld(const Point2D& n, Point2D& v);
 
 	private:

@@ -7,34 +7,34 @@ namespace Fractal
 	class WindowEvent : public Event
 	{
 	public:
-		inline virtual EventType GetEventType() const = 0;
-		inline virtual std::string ToString() const = 0;
+		virtual EventType GetEventType() const override = 0;
+		virtual std::string ToString() const override = 0;
 	};
 
 	class WindowCloseEvent : public WindowEvent
 	{
 	public:
-		WindowCloseEvent() = default;
+		constexpr WindowCloseEvent() = default;
 
-		static EventType GetStaticType() { return EventType::WindowClose; }
+		constexpr static EventType GetStaticType() { return EventType::WindowClose; }
 
 		EventType GetEventType() const override { return GetStaticType(); }
-		std::string ToString() const { return "WindowCloseEvent"; }
+		std::string ToString() const override { return "WindowCloseEvent"; }
 	};
 
 	class WindowResizeEvent : public WindowEvent
 	{
 	public:
-		WindowResizeEvent(int width, int height)
+		constexpr WindowResizeEvent(const int width, const int height)
 			: m_Width(width), m_Height(height) {}
 
-		int GetWidth() { return m_Width; }
-		int GetHeight() { return m_Height; }
-		
-		static EventType GetStaticType() { return EventType::WindowResize; }
+		constexpr int GetWidth() { return m_Width; }
+		constexpr int GetHeight() { return m_Height; }
+
+		constexpr static EventType GetStaticType() { return EventType::WindowResize; }
 
 		EventType GetEventType() const override { return GetStaticType(); }
-		std::string ToString() const
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowResizeEvent: (" << m_Width << "," << m_Height << ")";

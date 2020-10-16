@@ -10,7 +10,7 @@ namespace Fractal
 	{
 	public:
 		static void Init();
-		static inline std::shared_ptr<spdlog::logger>& GetLogger() { return s_Logger; }
+		inline static std::shared_ptr<spdlog::logger>& GetLogger() { return s_Logger; }
 
 	private:
 		static std::shared_ptr<spdlog::logger> s_Logger;

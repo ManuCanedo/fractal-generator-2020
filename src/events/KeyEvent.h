@@ -6,7 +6,6 @@ namespace Fractal
 {
 	enum class KeyCode
 	{
-		// glfw
 		SPACE = 32, ESCAPE = 256,
 		RIGHT = 262, LEFT = 263, DOWN = 264, UP = 265
 	};
@@ -14,19 +13,20 @@ namespace Fractal
 	class KeyEvent : public Event
 	{
 	public:
-		KeyCode GetKeyCode() const { return m_KeyCode; };
+		constexpr KeyCode GetKeyCode() const { return m_KeyCode; };
 
 	protected:
-		KeyEvent(const KeyCode key) : m_KeyCode(key) {}
+		explicit constexpr KeyEvent(const KeyCode& key) : m_KeyCode(key) {}
+
 		KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode key) : KeyEvent(key) {}
+		explicit constexpr KeyPressedEvent(const KeyCode& key) : KeyEvent(key) {}
 
-		static EventType GetStaticType() { return EventType::KeyPressed; }
+		constexpr static EventType GetStaticType() { return EventType::KeyPressed; }
 
 		EventType GetEventType() const override { return GetStaticType(); }
 		std::string ToString() const override
@@ -40,9 +40,9 @@ namespace Fractal
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(const KeyCode key) : KeyEvent(key) {}
+		explicit constexpr KeyReleasedEvent(const KeyCode& key) : KeyEvent(key) {}
 
-		static EventType GetStaticType() { return EventType::KeyReleased; }
+		constexpr static EventType GetStaticType() { return EventType::KeyReleased; }
 
 		EventType GetEventType() const override { return GetStaticType(); }
 		std::string ToString() const override
@@ -56,9 +56,9 @@ namespace Fractal
 	class KeyHeldEvent : public KeyEvent
 	{
 	public:
-		KeyHeldEvent(const KeyCode key) : KeyEvent(key) {}
+		explicit constexpr KeyHeldEvent(const KeyCode& key) : KeyEvent(key) {}
 
-		static EventType GetStaticType() { return EventType::KeyHeld; }
+		constexpr static EventType GetStaticType() { return EventType::KeyHeld; }
 
 		EventType GetEventType() const override { return GetStaticType(); }
 		std::string ToString() const override

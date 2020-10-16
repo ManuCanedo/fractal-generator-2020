@@ -13,6 +13,7 @@ namespace Fractal
 	class Event
 	{
 		friend class EventDispatcher;
+
 	public:
 		virtual EventType GetEventType() const = 0;
 		virtual std::string ToString() const = 0;
@@ -27,7 +28,7 @@ namespace Fractal
 		using fEvent = std::is_function<bool(T&)>;
 
 	public:
-		EventDispatcher(Event& event) : m_Event(event) {}
+		explicit EventDispatcher(Event& event) : m_Event(event) {}
 
 		template<typename T, typename F>
 		bool Dispatch(const F& func)

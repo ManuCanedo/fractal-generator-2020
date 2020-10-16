@@ -19,18 +19,13 @@ namespace Fractal
 		pPixel[0] = blue; pPixel[1] = green; pPixel[2] = red;
 	}
 
-	bool Bitmap::Write(std::string filename)
+	bool Bitmap::Write(const std::string filename)
 	{
-		BitmapFileHeader fileHeader;
-		BitmapInfoHeader infoHeader;
-
-		fileHeader.fileSize = sizeof(BitmapFileHeader)
-			+ sizeof(BitmapInfoHeader) + (3 * static_cast<int64_t>(m_Width) * static_cast<int64_t>(m_Height));
-		fileHeader.dataOffset = sizeof(BitmapFileHeader)
-			+ sizeof(BitmapInfoHeader);
-
-		infoHeader.width = m_Width;
-		infoHeader.height = m_Height;
+		static const unsigned int fileSize{ sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) 
+			+ (3 * static_cast<int64_t>(m_Width) * static_cast<int64_t>(m_Height)) };
+		static const unsigned int dataOffset{ sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) };
+		static const char* fileHeader{ reinterpret_cast<char*>(&BitmapFileHeader(fileSize, dataOffset)) };
+		static const char* infoHeader{ reinterpret_cast<char*>(&BitmapInfoHeader(m_Width, m_Height)) };
 
 		std::ofstream file;
 		file.open(filename, std::ios::out | std::ios::binary);

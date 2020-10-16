@@ -8,7 +8,7 @@ namespace Fractal
 	class WindowsWindow : public Window
 	{
 	public:
-		WindowsWindow(const WindowProperties& props);
+		explicit WindowsWindow(const WindowProperties& props);
 		virtual ~WindowsWindow();
 
 		void OnUpdate() override;
@@ -16,9 +16,8 @@ namespace Fractal
 		unsigned int GetWidth() const override { return m_Data.Width; }
 		unsigned int GetHeight() const override { return m_Data.Height; }
 
-		void SetEventCallback(std::function<void(Event&)>) override;
-		void SetVSync(bool enabled) override; 
-		bool IsVSync() const override;
+		void SetEventCallback(const std::function<void(Event&)>) override;
+		void SetVSync(const bool enabled) override;
 
 	private:
 		void Init(const WindowProperties& props);
@@ -32,7 +31,6 @@ namespace Fractal
 		{
 			std::string Title;
 			unsigned int Width, Height;
-			bool VSync;
 
 			std::function<void(Event&)> fEventCallback;
 		} m_Data;
