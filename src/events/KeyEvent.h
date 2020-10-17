@@ -16,7 +16,7 @@ namespace Fractal
 		constexpr KeyCode GetKeyCode() const { return m_KeyCode; };
 
 	protected:
-		explicit constexpr KeyEvent(const KeyCode& key) : m_KeyCode(key) {}
+		explicit KeyEvent(const KeyCode& key) : m_KeyCode(key) {}
 
 		KeyCode m_KeyCode;
 	};
@@ -24,7 +24,7 @@ namespace Fractal
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		explicit constexpr KeyPressedEvent(const KeyCode& key) : KeyEvent(key) {}
+		explicit KeyPressedEvent(const KeyCode& key) : KeyEvent(key) {}
 
 		constexpr static EventType GetStaticType() { return EventType::KeyPressed; }
 
@@ -40,7 +40,7 @@ namespace Fractal
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		explicit constexpr KeyReleasedEvent(const KeyCode& key) : KeyEvent(key) {}
+		explicit KeyReleasedEvent(const KeyCode& key) : KeyEvent(key) {}
 
 		constexpr static EventType GetStaticType() { return EventType::KeyReleased; }
 
@@ -56,7 +56,7 @@ namespace Fractal
 	class KeyHeldEvent : public KeyEvent
 	{
 	public:
-		explicit constexpr KeyHeldEvent(const KeyCode& key) : KeyEvent(key) {}
+		explicit KeyHeldEvent(const KeyCode& key) : KeyEvent(key) {}
 
 		constexpr static EventType GetStaticType() { return EventType::KeyHeld; }
 

@@ -15,7 +15,7 @@ namespace Fractal
 		constexpr MouseButtonCode GetMouseButton() const { return m_MouseButtonCode; }
 
 	protected:
-		explicit constexpr MouseButtonEvent(const MouseButtonCode& button) : m_MouseButtonCode(button) {}
+		explicit MouseButtonEvent(const MouseButtonCode& button) : m_MouseButtonCode(button) {}
 
 		MouseButtonCode m_MouseButtonCode;
 	};
@@ -23,7 +23,7 @@ namespace Fractal
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		explicit constexpr MouseButtonPressedEvent(const MouseButtonCode& code) : MouseButtonEvent(code) {}
+		explicit MouseButtonPressedEvent(const MouseButtonCode& code) : MouseButtonEvent(code) {}
 
 		constexpr static EventType GetStaticType() { return EventType::MouseButtonPressed; }
 
@@ -39,7 +39,7 @@ namespace Fractal
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		explicit constexpr MouseButtonReleasedEvent(const MouseButtonCode& code) : MouseButtonEvent(code) {}
+		explicit MouseButtonReleasedEvent(const MouseButtonCode& code) : MouseButtonEvent(code) {}
 
 		constexpr static EventType GetStaticType() { return EventType::MouseButtonReleased; }
 
@@ -55,7 +55,7 @@ namespace Fractal
 	class MouseMovedEvent : public Event
 	{
 	public:
-		constexpr MouseMovedEvent(const double x, const double y)
+		MouseMovedEvent(const double x, const double y)
 			: m_MouseX(x), m_MouseY(y) {}
 
 		constexpr double GetX() const { return m_MouseX; }
@@ -78,7 +78,7 @@ namespace Fractal
 	class MouseScrolledEvent: public Event
 	{
 	public:
-		constexpr MouseScrolledEvent(const double xOffset, const double yOffset)
+		MouseScrolledEvent(const double xOffset, const double yOffset)
 			: m_OffsetX(xOffset), m_OffsetY(yOffset) {}
 
 		constexpr double GetOffsetX() const { return m_OffsetX; }

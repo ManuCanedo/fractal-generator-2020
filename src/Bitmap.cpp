@@ -2,14 +2,18 @@
 #include "fpch.h"
 
 #include "Bitmap.h"
-#include "BitmapHeader.h"
 
 namespace Fractal
 {
-	Bitmap::Bitmap(int width, int height)
-		: m_Width(width), m_Height(height),
-		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height)))  
+	BitmapFileHeader Bitmap::m_sFileHeader{ 0 };
+	BitmapInfoHeader Bitmap::m_sInfoHeader{ 0, 0 };
+
+	Bitmap::Bitmap(int width, int height) : m_Width(width), m_Height(height),
+		m_pPixels(std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(width) * static_cast<int64_t>(height)))
 	{
+		m_sFileHeader.fileSize = m_sFileHeader.dataOffset + 3 * m_Width * m_Height;
+		m_sInfoHeader.width = m_Width;
+		m_sInfoHeader.height = m_Height;
 	}
 
 	void Bitmap::SetPixel(uint64_t x, uint64_t y, uint8_t red, uint8_t green, uint8_t blue)
@@ -21,20 +25,18 @@ namespace Fractal
 
 	bool Bitmap::Write(const std::string filename)
 	{
-		static const unsigned int fileSize{ sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) 
-			+ (3 * static_cast<int64_t>(m_Width) * static_cast<int64_t>(m_Height)) };
-		static const unsigned int dataOffset{ sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) };
-		static const char* fileHeader{ reinterpret_cast<char*>(&BitmapFileHeader(fileSize, dataOffset)) };
-		static const char* infoHeader{ reinterpret_cast<char*>(&BitmapInfoHeader(m_Width, m_Height)) };
+		static const char* fileHeader{ reinterpret_cast<char*>(&m_sFileHeader) };
+		static const char* infoHeader{ reinterpret_cast<char*>(&m_sInfoHeader) };
 
 		std::ofstream file;
 		file.open(filename, std::ios::out | std::ios::binary);
 
 		if (!file) return false;
 
-		file.write(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
-		file.write(reinterpret_cast<char*>(&infoHeader), sizeof(infoHeader));
-		file.write(reinterpret_cast<char*>(m_pPixels.get()), 3 * static_cast<int64_t>(m_Width) * static_cast<int64_t>(m_Height));
+		file.write(fileHeader, sizeof(m_sFileHeader));
+		file.write(infoHeader, sizeof(m_sInfoHeader));
+		file.write(reinterpret_cast<char*>(m_pPixels.get()),
+			3 * static_cast<int64_t>(m_Width) * static_cast<int64_t>(m_Height));
 		file.close();
 
 		if (!file) return false;

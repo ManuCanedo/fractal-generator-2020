@@ -14,7 +14,7 @@ namespace Fractal
 	class WindowCloseEvent : public WindowEvent
 	{
 	public:
-		constexpr WindowCloseEvent() = default;
+		WindowCloseEvent() = default;
 
 		constexpr static EventType GetStaticType() { return EventType::WindowClose; }
 
@@ -25,11 +25,11 @@ namespace Fractal
 	class WindowResizeEvent : public WindowEvent
 	{
 	public:
-		constexpr WindowResizeEvent(const int width, const int height)
+		WindowResizeEvent(const int width, const int height)
 			: m_Width(width), m_Height(height) {}
 
-		constexpr int GetWidth() { return m_Width; }
-		constexpr int GetHeight() { return m_Height; }
+		constexpr int GetWidth() const { return m_Width; }
+		constexpr int GetHeight() const { return m_Height; }
 
 		constexpr static EventType GetStaticType() { return EventType::WindowResize; }
 

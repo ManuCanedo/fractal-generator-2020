@@ -53,7 +53,7 @@ namespace Fractal
 		ImGui::SetNextWindowSize(ImVec2(165, 310), ImGuiCond_Once);
 		ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 
-		static float rOffset{ 0.0f }, gOffset{ 2.094f }, bOffset{ 4.188f };
+		static float rOffset{ 4.8f }, gOffset{ 1.0f }, bOffset{ 3.6f };
 		static bool bAVX{ true }, bBinary{ false };
 
 		ImGui::Begin("Settings", false, ImGuiWindowFlags_NoResize);
@@ -71,7 +71,7 @@ namespace Fractal
 
 		if (ImGui::Button("Default"))
 		{
-			static float rOffsetDefault{ 0.0f }, gOffsetDefault{ 2.094f }, bOffsetDefault{ 4.188f };
+			static float rOffsetDefault{ 4.8f }, gOffsetDefault{ 1.0f }, bOffsetDefault{ 3.6f };
 
 			rOffset = rOffsetDefault;
 			gOffset = gOffsetDefault;

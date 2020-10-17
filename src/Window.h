@@ -15,7 +15,7 @@ namespace Fractal
 		constexpr Point2D operator/(const Point2D& other) const { return { x / other.y, y / other.y }; }
 		constexpr void operator+=(const Point2D& other) { x += other.x; y += other.y; }
 		constexpr void operator-=(const Point2D& other) { x -= other.x; y -= other.y; }
-		constexpr void operator*=(double other) { x *= other; y *= other; }
+		constexpr void operator*=(const double other) { x *= other; y *= other; }
 	};
 
 	struct WindowProperties

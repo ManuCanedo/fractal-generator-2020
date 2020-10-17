@@ -5,7 +5,7 @@ struct AllocationTracker
 	int TotalAllocated{ 0 };
 	int TotalFreed{ 0 };
 
-	constexpr int CurrentUsage()
+	constexpr int CurrentUsage() const
 	{
 		return static_cast<int>(TotalAllocated - TotalFreed);
 	}

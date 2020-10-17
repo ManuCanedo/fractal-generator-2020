@@ -13,106 +13,100 @@ namespace Fractal
 	static std::mutex s_Mutex;
 	Application* Application::s_pInstance{ nullptr };
 
-	// Ez-tweak globals. Only used in constructor below
 	constexpr char* NAME = "Fractal Explorer";
-	constexpr unsigned int WIDTH{ 1600 }, HEIGHT{ 900 };
+	constexpr unsigned int WIDTH{ 1600 }, HEIGHT{ 900 }, THREADS{ 16 };
 
-	Application::Application() : m_Futures(m_Threads), m_Scale({ WIDTH / 2, HEIGHT })
+	Application::Application()
+		: m_Threads(THREADS), m_Futures(m_Threads), m_Scale({ WIDTH / 2, HEIGHT })
 	{
 		Timer timer;
 		s_pInstance = this;
 
 		std::future<int> fut = std::async(std::launch::async, &SupportsIntelVectorExtensions);
-		
+
 		m_Window = std::unique_ptr<Window>(Window::Create({ NAME, WIDTH, HEIGHT }));
 		m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 		m_pFractal = std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(m_Window->GetWidth()) * m_Window->GetHeight());
+
 		m_bSupportedAVX2 = fut.get();
 	}
 
-	unsigned int Application::Run()
+	void Application::Run()
 	{
 		while (m_bRunning)
-		{
 			Update();
-		}
-
-		return m_FrameCount;
 	}
 
 	void Application::Update()
 	{
-		Point2D pixTopLeft{ 0.0, 0.0 };
-		Point2D pixBottomRight{ static_cast<double>(m_Window->GetWidth()), static_cast<double>(m_Window->GetHeight()) };
+		constexpr static Point2D m_PixTopLeft{ 0.0, 0.0 }, m_PixBottomRight{ WIDTH, HEIGHT };
+		constexpr static double scrSectionWidth{ (m_PixBottomRight.x - m_PixTopLeft.x) / THREADS };
+
 		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
 
 		ChangeWorldScale(m_ScalingFactor);
-		ScreenToWorld(pixTopLeft, fractTopLeft);
-		ScreenToWorld(pixBottomRight, fractBottomRight);
+		ScreenToWorld(m_PixTopLeft, fractTopLeft);
+		ScreenToWorld(m_PixBottomRight, fractBottomRight);
 
-		double scrSectionWidth{ (pixBottomRight.x - pixTopLeft.x) / m_Threads };
 		double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
 		unsigned int iters{ m_Iterations };
 
-		if (m_bBinarySearch) // Binary Search Simulation Mode 
-			iters = static_cast<unsigned int>(log2(iters));
+		if (m_bScreenshot) SaveFractal();											// Take Screenshot
 
-		if (m_FrameCount++) // Skipping first frame to optimize multithreading
+		if (m_bBinarySearch) iters = static_cast<unsigned int>(log2(iters));		// Binary Search Simulation Mode 
+
+		static bool bFirstFrame{ true };											// Multithreading optimization
+		if (!bFirstFrame) 
 		{
 			for (auto&& f : m_Futures) f.wait();
 			glDrawPixels(m_Window->GetWidth(), m_Window->GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, m_pFractal.get());
 		}
+		bFirstFrame = false;
 
-		if (m_bAVX2 && m_bSupportedAVX2) // AVX Fractal Calculation Mode
-		{
+		if (m_bAVX2 && m_bSupportedAVX2)											// AVX Fractal Calculation Mode
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSectionAVX, this,
 					m_pFractal.get(), m_Window->GetWidth(), iters,
-					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
-					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
+					Point2D(m_PixTopLeft.x + (scrSectionWidth * i), m_PixTopLeft.y),
+					Point2D(m_PixTopLeft.x + (scrSectionWidth * (i + 1)), m_PixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
-		}
-		else // Standard Fractal Calculation Mode
-		{
+
+		else																		// Standard Fractal Calculation Mode
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
 					m_pFractal.get(), m_Window->GetWidth(), iters,
-					Point2D(pixTopLeft.x + (scrSectionWidth * i), pixTopLeft.y),
-					Point2D(pixTopLeft.x + (scrSectionWidth * (i + 1)), pixBottomRight.y),
+					Point2D(m_PixTopLeft.x + (scrSectionWidth * i), m_PixTopLeft.y),
+					Point2D(m_PixTopLeft.x + (scrSectionWidth * (i + 1)), m_PixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
-
-		}
-
-		if (m_bScreenshot) // Save Screenshot
-			SaveFractal();
 
 		m_Window->OnUpdate();
 	}
 
-	bool Application::CalculateFractalSection(uint8_t* pMemory, unsigned int width, unsigned int iterations,
+	bool Application::CalculateFractalSection(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
-		double xPos{ fractTopLeft.x }, yPos{ fractTopLeft.y };
+		double yPos{ fractTopLeft.y };
 		unsigned int rowSize{ width }, yOffset{ 0 };
 
 		for (int y = static_cast<int>(pixTopLeft.y); y < pixBottomRight.y; ++y)
 		{
-			xPos = fractTopLeft.x;
+			double xPos{ fractTopLeft.x };
 			for (int x = static_cast<int>(pixTopLeft.x); x < pixBottomRight.x; ++x)
 			{
 				std::complex<double> z{ 0.0, 0.0 };
 				std::complex<double> c{ xPos, yPos };
 				unsigned int n{ 0 };
 
-				while (z.real() * z.real() + z.imag() * z.imag() < 4 && ++n < iterations)
+				while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iterations)
 				{
 					z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
 						2 * z.real() * z.imag() + c.imag() };
+					++n;
 				}
 
 				uint8_t* pPixels{ pMemory + 3 * (static_cast<int64_t>(yOffset) + x) };
@@ -138,7 +132,7 @@ namespace Fractal
 		return true;
 	}
 
-	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, unsigned int width, unsigned int iterations,
+	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
 		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
@@ -173,6 +167,7 @@ namespace Fractal
 				//std::complex<double> z{ 0.0, 0.0 };
 				_zr = _mm256_setzero_pd();
 				_zi = _mm256_setzero_pd();
+
 				//std::complex<double> c{ xPos, yPos };
 				_cr = _xPos;
 
@@ -181,10 +176,10 @@ namespace Fractal
 
 				//while ()
 			repeat:
+
 				// z.real() = z.real() * z.real() - z.imag() * z.imag() + c.real()
 				_zr2 = _mm256_mul_pd(_zr, _zr);
 				_zi2 = _mm256_mul_pd(_zi, _zi);
-
 				_auxDouble1 = _mm256_sub_pd(_zr2, _zi2);
 				_auxDouble2 = _mm256_mul_pd(_zr, _zi);
 				_zr = _mm256_add_pd(_auxDouble1, _cr);
@@ -204,7 +199,7 @@ namespace Fractal
 				_auxInt = _mm256_and_si256(_one, _maskInt);
 				_n = _mm256_add_epi64(_n, _auxInt);
 
-				// If the condition is true, keeps iterating
+				// if cond true true, keeps iterating
 				if (_mm256_movemask_pd(_mm256_castsi256_pd(_maskInt)) > 0)
 					goto repeat;
 
@@ -215,15 +210,13 @@ namespace Fractal
 				/* ----------     ----------     ----------     ---------- */
 
 				uint8_t* pPixels{ &pMemory[3 * (static_cast<int64_t>(yOffset) + x)] };
-				uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
-				unsigned int n;
-
+				
 				for (int i = 3; i >= 0; --i)
 				{
-					red = green = blue = 0;
-
 					// reg _n contains [pix3 n][pix2 n][pix1 n][pix0 n]
-					n = static_cast<unsigned int>(int(_n.m256i_i64[i]));
+					unsigned int n{ static_cast<unsigned int>(int(_n.m256i_i64[i])) };
+					uint8_t red{ 0 }, green{ 0 }, blue{ 0 };
+
 					if (n < iterations)
 					{
 						red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + 0.5));
@@ -274,13 +267,13 @@ namespace Fractal
 	{
 		EventDispatcher dispatcher(event);
 
-		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event)
+		dispatcher.Dispatch<WindowCloseEvent>([this](const WindowCloseEvent& event)
 			{
 				m_bRunning = false;
 				return true;
 			});
 
-		dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event)
+		dispatcher.Dispatch<MouseMovedEvent>([this](const MouseMovedEvent& event)
 			{
 				m_MouseCoords = { event.GetX(), event.GetY() };
 				if (m_bPanning)
@@ -291,7 +284,7 @@ namespace Fractal
 				return true;
 			});
 
-		dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent& event)
+		dispatcher.Dispatch<MouseButtonPressedEvent>([this](const MouseButtonPressedEvent& event)
 			{
 				if (event.GetMouseButton() == MouseButtonCode::WHEEL)
 				{
@@ -301,20 +294,20 @@ namespace Fractal
 				return m_bPanning;
 			});
 
-		dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent& event)
+		dispatcher.Dispatch<MouseButtonReleasedEvent>([this](const MouseButtonReleasedEvent& event)
 			{
 				if (event.GetMouseButton() == MouseButtonCode::WHEEL)
 					m_bPanning = false;
 				return true;
 			});
 
-		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event)
+		dispatcher.Dispatch<MouseScrolledEvent>([this](const MouseScrolledEvent& event)
 			{
 				(event.GetOffsetY() > 0) ? m_ScalingFactor = 1.1f : m_ScalingFactor = 0.9f;
 				return true;
 			});
 
-		dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event)
+		dispatcher.Dispatch<KeyPressedEvent>([this](const KeyPressedEvent& event)
 			{
 				switch (event.GetKeyCode())
 				{
@@ -345,7 +338,7 @@ namespace Fractal
 				return true;
 			});
 
-		dispatcher.Dispatch<KeyHeldEvent>([this](KeyHeldEvent& event)
+		dispatcher.Dispatch<KeyHeldEvent>([this](const KeyHeldEvent& event)
 			{
 				switch (event.GetKeyCode())
 				{
@@ -357,7 +350,7 @@ namespace Fractal
 			});
 	}
 
-	void Application::ChangeWorldScale(double scalingFactor)
+	inline void Application::ChangeWorldScale(const double scalingFactor)
 	{
 		Point2D mouseCoordsBeforeZoom{ 0.0f, 0.0f }, mouseCoordsAfterZoom{ 0.0f, 0.0f };
 		ScreenToWorld(m_MouseCoords, mouseCoordsBeforeZoom);
@@ -368,7 +361,7 @@ namespace Fractal
 		m_ScalingFactor = 1.0f;
 	}
 
-	inline void Application::ScreenToWorld(const Point2D& n, Point2D& v)
+	inline void Application::ScreenToWorld(const Point2D& n, Point2D& v) const
 	{
 		v.x = n.x / m_Scale.x + m_Offset.x;
 		v.y = n.y / m_Scale.y + m_Offset.y;

@@ -9,7 +9,7 @@ namespace Fractal
 	{
 	public:
 		explicit WindowsWindow(const WindowProperties& props);
-		virtual ~WindowsWindow();
+		~WindowsWindow();
 
 		void OnUpdate() override;
 
