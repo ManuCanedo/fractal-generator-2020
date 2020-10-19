@@ -1,5 +1,9 @@
 # Screenshots
 
+19_10:
+
+![Fractal](10_19_LuckyFractal.jpg) 
+
 14_10: Screenshots shared by Chopito12
 
 ![Fractal](Fractal_Screenshot_User2.jpg)  

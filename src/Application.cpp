@@ -39,16 +39,17 @@ namespace Fractal
 
 	void Application::Update()
 	{
-		constexpr static Point2D m_PixTopLeft{ 0.0, 0.0 }, m_PixBottomRight{ WIDTH, HEIGHT };
-		constexpr static double scrSectionWidth{ (m_PixBottomRight.x - m_PixTopLeft.x) / THREADS };
+		constexpr static Point2D m_PixTopLeft{ 0.0, 0.0 };
 
+		const Point2D m_PixBottomRight{ static_cast<double>(m_Window->GetWidth()), static_cast<double>(m_Window->GetHeight()) };
 		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
-
+		
 		ChangeWorldScale(m_ScalingFactor);
 		ScreenToWorld(m_PixTopLeft, fractTopLeft);
 		ScreenToWorld(m_PixBottomRight, fractBottomRight);
 
-		double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
+		const double scrSectionWidth{ (m_PixBottomRight.x - m_PixTopLeft.x) / m_Threads };
+		const double fracSectionWidth{ (fractBottomRight.x - fractTopLeft.x) / m_Threads };
 		unsigned int iters{ m_Iterations };
 
 		if (m_bScreenshot) SaveFractal();											// Take Screenshot
