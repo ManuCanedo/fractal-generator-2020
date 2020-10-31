@@ -15,13 +15,13 @@ namespace Fractal
 		void Update();
 		void OnEvent(Event& event);
 
-		void SetRedOffset(float val) { m_RGBOffset.x.exchange(val); }
-		void SetGreenOffset(float val) { m_RGBOffset.y.exchange(val); }
-		void SetBlueOffset(float val) { m_RGBOffset.z.exchange(val); }
+		void SetRedOffset(const float val) { m_RGBOffset.x.exchange(val); }
+		void SetGreenOffset(const float val) { m_RGBOffset.y.exchange(val); }
+		void SetBlueOffset(const float val) { m_RGBOffset.z.exchange(val); }
 
-		void SetModeAVX(bool val) { m_bAVX2 = val; }
-		void SetModeBinary(bool val) { m_bBinarySearch = val; }
-		void SetScreenshot(bool val) { m_bScreenshot = val; }
+		void SetModeAVX(const bool val) { m_bAVX2 = val; }
+		void SetModeBinary(const bool val) { m_bBinarySearch = val; }
+		void SetScreenshot(const bool val) { m_bScreenshot = val; }
 
 		Window& GetWindow() const { return *m_Window; }
 		constexpr int GetIterations() const { return m_Iterations; }

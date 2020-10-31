@@ -2,8 +2,6 @@
 #include "Application.h"
 #include "Bitmap.h"
 #include "tools/AllocationTracker.h"
-
-// CPU Info
 #include "Tools/CPUFeatures.h"
 
 #include <GLFW/glfw3.h>
@@ -13,18 +11,16 @@ namespace Fractal
 	static std::mutex s_Mutex;
 	Application* Application::s_pInstance{ nullptr };
 
-	constexpr char* NAME = "Fractal Explorer";
-	constexpr unsigned int WIDTH{ 1600 }, HEIGHT{ 900 }, THREADS{ 16 };
+	constexpr unsigned int WIDTH{ 1600 }, HEIGHT{ 900 }, THREADS{ 40 };
 
 	Application::Application()
 		: m_Threads(THREADS), m_Futures(m_Threads), m_Scale({ WIDTH / 2, HEIGHT })
 	{
 		Timer timer;
 		s_pInstance = this;
-
 		std::future<int> fut = std::async(std::launch::async, &SupportsIntelVectorExtensions);
 
-		m_Window = std::unique_ptr<Window>(Window::Create({ NAME, WIDTH, HEIGHT }));
+		m_Window = std::unique_ptr<Window>(Window::Create({ "Fractal Explorer", WIDTH, HEIGHT }));
 		m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
 		m_pFractal = std::make_unique<uint8_t[]>(3 * static_cast<int64_t>(m_Window->GetWidth()) * m_Window->GetHeight());
 
@@ -39,12 +35,12 @@ namespace Fractal
 
 	void Application::Update()
 	{
-		constexpr static Point2D m_PixTopLeft{ 0.0, 0.0 };
+		ChangeWorldScale(m_ScalingFactor);
 
+		constexpr static Point2D m_PixTopLeft{ 0.0, 0.0 };
 		const Point2D m_PixBottomRight{ static_cast<double>(m_Window->GetWidth()), static_cast<double>(m_Window->GetHeight()) };
 		Point2D fractTopLeft{ -2.0, -1.0 }, fractBottomRight{ 1.0, 1.0 };
-		
-		ChangeWorldScale(m_ScalingFactor);
+
 		ScreenToWorld(m_PixTopLeft, fractTopLeft);
 		ScreenToWorld(m_PixBottomRight, fractBottomRight);
 
@@ -53,7 +49,6 @@ namespace Fractal
 		unsigned int iters{ m_Iterations };
 
 		if (m_bScreenshot) SaveFractal();											// Take Screenshot
-
 		if (m_bBinarySearch) iters = static_cast<unsigned int>(log2(iters));		// Binary Search Simulation Mode 
 
 		static bool bFirstFrame{ true };											// Multithreading optimization
@@ -72,7 +67,6 @@ namespace Fractal
 					Point2D(m_PixTopLeft.x + (scrSectionWidth * (i + 1)), m_PixBottomRight.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * i), fractTopLeft.y),
 					Point2D(fractTopLeft.x + (fracSectionWidth * (i + 1)), fractBottomRight.y));
-
 		else																		// Standard Fractal Calculation Mode
 			for (size_t i = 0; i < m_Threads; ++i)
 				m_Futures[i] = std::async(std::launch::async, &Application::CalculateFractalSection, this,
@@ -88,8 +82,8 @@ namespace Fractal
 	bool Application::CalculateFractalSection(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
-		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
-		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
+		const double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
+		const double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
 		double yPos{ fractTopLeft.y };
 		unsigned int rowSize{ width }, yOffset{ 0 };
@@ -136,8 +130,8 @@ namespace Fractal
 	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
 		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
 	{
-		double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
-		double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
+		const double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
+		const double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
 
 		double yPos{ fractTopLeft.y };
 		unsigned int rowSize{ width }, yOffset{ 0 };

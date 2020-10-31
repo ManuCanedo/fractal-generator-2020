@@ -18,11 +18,11 @@ namespace Fractal
 }
 
 // LOGGING ENABLED
-#define LOG_TRACE(...)   ::Fractal::Log::GetLogger()->trace(__VA_ARGS__);
-#define LOG_INFO(...)    ::Fractal::Log::GetLogger()->info(__VA_ARGS__);
-#define LOG_WARN(...)    ::Fractal::Log::GetLogger()->warn(__VA_ARGS__);
-#define LOG_ERROR(...)   ::Fractal::Log::GetLogger()->error(__VA_ARGS__);
-#define LOG_FATAL(...)   ::Fractal::Log::GetLogger()->fatal(__VA_ARGS__);
+#define LOG_TRACE(...)   ::Fractal::Log::GetLogger()->trace(__VA_ARGS__)
+#define LOG_INFO(...)    ::Fractal::Log::GetLogger()->info(__VA_ARGS__)
+#define LOG_WARN(...)    ::Fractal::Log::GetLogger()->warn(__VA_ARGS__)
+#define LOG_ERROR(...)   ::Fractal::Log::GetLogger()->error(__VA_ARGS__)
+#define LOG_FATAL(...)   ::Fractal::Log::GetLogger()->fatal(__VA_ARGS__)
 
 // LOGGING DISABLED
 // #define LOG_TRACE   

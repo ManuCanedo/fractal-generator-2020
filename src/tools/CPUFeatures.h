@@ -80,6 +80,8 @@ static int SupportsIntelVectorExtensions()
     
     if (!Intel4thGenFeaturesAvailable)
         LOG_ERROR("CPU does not support AVX2 instructions. AVX mode disabled");
+    else
+        LOG_INFO("CPU supports AVX2 instructions. AVX mode enabled");
 
     return Intel4thGenFeaturesAvailable;
 }
