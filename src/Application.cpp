@@ -109,9 +109,9 @@ namespace Fractal
 
 				if (n < iterations)
 				{
-					red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + 0.5));
-					green = static_cast<uint8_t>	(256 * (0.2 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.y) + 0.5));
-					blue = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.z) + 0.5));
+					red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1f * n + m_RGBOffset.x) + 0.5));
+					green = static_cast<uint8_t>	(256 * (0.2 * sin(0.1f * n + m_RGBOffset.y) + 0.5));
+					blue = static_cast<uint8_t>	(256 * (0.5 * sin(0.1f * n + m_RGBOffset.z) + 0.5));
 				}
 
 				pPixels[0] = red;
@@ -214,9 +214,9 @@ namespace Fractal
 
 					if (n < iterations)
 					{
-						red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.x) + 0.5));
-						green = static_cast<uint8_t>	(256 * (0.2 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.y) + 0.5));
-						blue = static_cast<uint8_t>	(256 * (0.5 * sin(0.1 * static_cast<float>(n) + m_RGBOffset.z) + 0.5));
+						red = static_cast<uint8_t>	(256 * (0.5 * sin(0.1f * n + m_RGBOffset.x) + 0.5));
+						green = static_cast<uint8_t>	(256 * (0.2 * sin(0.1f * n + m_RGBOffset.y) + 0.5));
+						blue = static_cast<uint8_t>	(256 * (0.5 * sin(0.1f * n + m_RGBOffset.z) + 0.5));
 					}
 
 					pPixels[0] = red;
