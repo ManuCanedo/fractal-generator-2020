@@ -9,7 +9,6 @@ namespace Fractal
 	{
 	public:
 		Application();
-		~Application() = default;
 
 		void Run();
 		void Update();
