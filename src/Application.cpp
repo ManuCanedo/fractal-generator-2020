@@ -80,7 +80,7 @@ namespace Fractal
 	}
 
 	bool Application::CalculateFractalSection(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
-		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
+		const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, const Point2D& fractBottomRight)
 	{
 		const double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		const double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
@@ -128,7 +128,7 @@ namespace Fractal
 	}
 
 	bool Application::CalculateFractalSectionAVX(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
-		const Point2D&& pixTopLeft, const Point2D&& pixBottomRight, const Point2D&& fractTopLeft, const Point2D&& fractBottomRight)
+		const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, const Point2D& fractBottomRight)
 	{
 		const double xScale{ (fractBottomRight.x - fractTopLeft.x) / (pixBottomRight.x - pixTopLeft.x) };
 		const double yScale{ (fractBottomRight.y - fractTopLeft.y) / (pixBottomRight.y - pixTopLeft.y) };
