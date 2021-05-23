@@ -1,4 +1,4 @@
-# Welcome to Fractal Generator - A real-time fractal world explorer
+# A real-time fractal world explorer
 
 The Mandelbrot fractal is a psichodelic mathematically-generated image that is self-like through different scales. Zoom in and out on the fractal to explore it! You can gradually apply a maximum zoom of around 1: 10^15 discovering countless fractal underworlds in the process. 
 
