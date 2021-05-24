@@ -1,52 +1,60 @@
-#pragma once
+#ifndef EVENT_H
+#define EVENT_H
 
-namespace Fractal
+namespace fractal
 {
-	enum class EventType
+enum class EventType {
+	NONE = 0,
+	WIN_CLOSE,
+	WIN_RESIZE,
+	KEY_PRESS,
+	KEY_RELEASE,
+	KEY_HOLD,
+	MOUSE_PRESS,
+	MOUSE_RELEASE,
+	MOUSE_HOLD,
+	MOUSE_MOVE,
+	MOUSE_SCROLL,
+};
+
+// Abstract parent class
+class Event {
+	friend class EventDispatcher;
+
+public:
+	virtual EventType type() const = 0;
+	virtual std::string to_string() const = 0;
+
+	friend std::ostream &operator<<(std::ostream os, const Event &e)
 	{
-		None = 0,
-		WindowClose, WindowResize,
-		KeyPressed, KeyReleased, KeyHeld,
-		MouseButtonPressed, MouseButtonReleased, MouseButtonHeld, MouseMoved, MouseScrolled,
-	};
-
-	class Event
-	{
-		friend class EventDispatcher;
-
-	public:
-		virtual EventType GetEventType() const = 0;
-		virtual std::string ToString() const = 0;
-
-	protected:
-		bool m_Handled{ false };
-	};
-
-	class EventDispatcher
-	{
-		template <typename T>
-		using fEvent = std::is_function<bool(T&)>;
-
-	public:
-		explicit EventDispatcher(Event& event) : m_Event(event) {}
-
-		template<typename T, typename F>
-		bool Dispatch(const F& func)
-		{
-			if (m_Event.GetEventType() == T::GetStaticType())
-			{
-				m_Event.m_Handled = func(static_cast<T&>(m_Event));
-				return true;
-			}
-			return false;
-		}
-
-	private:
-		Event& m_Event;
-	};
-
-	inline std::ostream& operator<<(std::ostream os, const Event& e)
-	{
-		return os << e.ToString();
+		return os << e.to_string();
 	}
+
+protected:
+	bool is_handled{ false };
+};
+
+// Dispatcher
+class EventDispatcher {
+	template <typename T> using event_func = std::is_function<bool(T &)>;
+
+public:
+	explicit EventDispatcher(Event &e) : event(e)
+	{
+	}
+
+	template <typename T, typename F> bool dispatch(const F &func)
+	{
+		if (event.type() == T::Get()) {
+			event.is_handled = func(static_cast<T &>(event));
+			return true;
+		}
+		return false;
+	}
+
+private:
+	Event &event;
+};
 }
+
+#endif // EVENT_H

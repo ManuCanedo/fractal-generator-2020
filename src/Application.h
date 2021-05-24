@@ -1,63 +1,98 @@
-#pragma once
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
-#include "Window.h"
-#include "UI/ImGuiLayer.h"
+#include "window.h"
+#include "ui/imgui_layer.h"
 
-namespace Fractal
+namespace fractal
 {
-	class Application
+class Application {
+public:
+	Application();
+
+	void run();
+	void update();
+	void on_event(Event &event);
+
+	void set_roffset(const float val)
 	{
-	public:
-		Application();
+		rgb_offset.x.exchange(val);
+	}
 
-		void Run();
-		void Update();
-		void OnEvent(Event& event);
+	void set_goffset(const float val)
+	{
+		rgb_offset.y.exchange(val);
+	}
 
-		void SetRedOffset(const float val) { m_RGBOffset.x.exchange(val); }
-		void SetGreenOffset(const float val) { m_RGBOffset.y.exchange(val); }
-		void SetBlueOffset(const float val) { m_RGBOffset.z.exchange(val); }
+	void set_boffset(const float val)
+	{
+		rgb_offset.z.exchange(val);
+	}
 
-		void SetModeAVX(const bool val) { m_bAVX2 = val; }
-		void SetModeBinary(const bool val) { m_bBinarySearch = val; }
-		void SetScreenshot(const bool val) { m_bScreenshot = val; }
+	void set_avx(const bool val)
+	{
+		is_avx2 = val;
+	}
 
-		Window& GetWindow() const { return *m_Window; }
-		constexpr int GetIterations() const { return m_Iterations; }
+	void set_complex_visualizer(const bool val)
+	{
+		is_complex_visualizer = val;
+	}
 
-		static Application& GetApplication() { return *s_pInstance; }
+	void set_save(const bool val)
+	{
+		is_screenshot = val;
+	}
 
-	private:
-		bool CalculateFractalSection(uint8_t* pMemory, const unsigned int width, const unsigned int iterations,
-			const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, const Point2D& fractBottomRight);
-		bool CalculateFractalSectionAVX(uint8_t* pMemory, unsigned int width, unsigned int iterations,
-			const Point2D& pixTopLeft, const Point2D& pixBottomRight, const Point2D& fractTopLeft, const Point2D& fractBottomRight);
-		void SaveFractal();
+	Window &get_window() const
+	{
+		return *window;
+	}
 
-		inline void ChangeWorldScale(const double scalingFactor);
-		inline void ScreenToWorld(const Point2D& n, Point2D& v) const;
+	constexpr int get_iters() const
+	{
+		return iterations;
+	}
 
-	private:
-		static Application* s_pInstance;
+	static Application &Get()
+	{
+		return *s_instance;
+	}
 
-	private:
-		std::unique_ptr<uint8_t[]> m_pFractal;
-		std::unique_ptr<Window> m_Window;
+private:
+	bool calc_section(uint8_t *mem, const int width, const int iters,
+			  const Point2D &pix_tl, const Point2D &pix_br, const Point2D &frac_tl,
+			  const Point2D &frac_br);
+	bool calc_section_avx(uint8_t *mem, int width, int iters,
+			      const Point2D &pix_tl, const Point2D &pix_br, const Point2D &frac_tl,
+			      const Point2D &frac_br);
+	void save();
+	void set_world_scale(const double scale);
+	void scr_to_world(const Point2D &n, Point2D &v) const;
 
-		const int m_Threads;
-		std::vector<std::future<bool>> m_Futures;
+private:
+	static Application *s_instance;
 
-		// Fractal Generation
-		unsigned int m_Iterations{ 258 };
-		Point2D m_Offset{ 0.0, 0.0 }, m_StartPan{ 0.0, 0.0 }, m_MouseCoords{ 0.0, 0.0 }, m_Scale{ 1.0, 1.0 };
+	std::unique_ptr<uint8_t[]> fractal;
+	std::unique_ptr<Window> window;
+	const int threads;
+	std::vector<std::future<bool> > futures;
 
-		// Fractal Colouring
-		struct Vec3f { std::atomic<float> x, y, z; } m_RGBOffset{ 0.0f, 0.0f, 0.0f };
+	// Fractal Generation
+	int iterations{ 258 };
+	Point2D offset{ 0.0, 0.0 }, start_pan{ 0.0, 0.0 }, mouse_coords{ 0.0, 0.0 },
+		scale{ 1.0, 1.0 };
+		
+	// Fractal Colouring
+	struct Vec3f {
+		std::atomic<float> x, y, z;
+	} rgb_offset{ 0.0f, 0.0f, 0.0f };
 
-		// Update Flags
-		bool m_bAVX2{ false }, m_bBinarySearch{ false }, m_bScreenshot{ false };
-		bool m_bSupportedAVX2{ false }, m_bRunning{ true }, m_bPanning{ false };
-		double m_ScalingFactor{ 1.0f };
-	};
+	// Update Flags
+	bool is_avx2{ false }, is_complex_visualizer{ false }, is_screenshot{ false };
+	bool is_supported_avx2{ false }, is_running{ true }, is_panning{ false }, is_fframe{ true };
+	double scaling_factor{ 1.0f };
+};
 }
 
+#endif // APPLICATION_H
