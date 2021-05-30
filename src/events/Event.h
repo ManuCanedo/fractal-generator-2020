@@ -55,6 +55,6 @@ public:
 private:
 	Event &event;
 };
-}
+} // namespace fractal
 
 #endif // EVENT_H

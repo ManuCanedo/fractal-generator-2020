@@ -10,7 +10,7 @@ public:
 	Bmp(const int w, const int h);
 
 	void set_pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b);
-	bool write(std::string path);
+	bool write(std::string_view path);
 
 private:
 	static BmpFileHeader s_file_header;

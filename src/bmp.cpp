@@ -16,8 +16,7 @@ Bmp::Bmp(int w, int h)
 	s_info_header.height = height;
 }
 
-void Bmp::set_pixel(const uint64_t x, const uint64_t y, const uint8_t r, const uint8_t g,
-		    const uint8_t b)
+void Bmp::set_pixel(const uint64_t x, const uint64_t y, const uint8_t r, const uint8_t g, const uint8_t b)
 {
 	auto pix = pixels.get();
 	pix += 3 * y * width + 3 * x;
@@ -26,13 +25,13 @@ void Bmp::set_pixel(const uint64_t x, const uint64_t y, const uint8_t r, const u
 	pix[2] = r;
 }
 
-bool Bmp::write(const std::string path)
+bool Bmp::write(std::string_view path)
 {
 	static const char *fh = reinterpret_cast<char *>(&s_file_header);
 	static const char *ih = reinterpret_cast<char *>(&s_info_header);
 
-	std::ofstream file(path, std::ios::out | std::ios::binary);
-	if (!file)
+	std::ofstream file(path.data(), std::ios::out | std::ios::binary);
+	if (file)
 		return false;
 
 	file.write(fh, sizeof(s_file_header));
@@ -43,4 +42,4 @@ bool Bmp::write(const std::string path)
 
 	return true;
 }
-}
+} // namespace fractal

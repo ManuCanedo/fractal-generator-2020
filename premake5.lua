@@ -1,7 +1,7 @@
 workspace "fractal-generator"
 architecture "x64"
 
-configurations {"Debug", "Release", "Dist"}
+configurations {"Release", "Dist"}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -25,16 +25,12 @@ includedirs {"src", "vendor/spdlog/include", "vendor/glfw/include", "vendor/glew
 
 libdirs {"vendor/glfw/lib", "vendor/glew/lib"}
 
-links {"opengl32.lib", "glew32s.lib", "glfw3.lib", "msvcrt.lib", "msvcmrt.lib"}
+links {"opengl32.lib", "glew32s.lib", "glfw3.lib", "msvcrt.lib", "msvcmrt.lib", "LIBCMT.lib"}
 
 filter "system:windows"
 cppdialect "C++17"
 staticruntime "On"
 systemversion "latest"
-
-filter "configurations:Debug"
-defines "FRACTAL_DEBUG"
-symbols "On"
 
 filter "configurations:Release"
 defines "FRACTAL_RELEASE"

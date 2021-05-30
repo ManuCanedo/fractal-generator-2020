@@ -93,6 +93,6 @@ public:
 		return ss.str();
 	}
 };
-}
+} // namespace fractal
 
 #endif // KEY_EVENT_H

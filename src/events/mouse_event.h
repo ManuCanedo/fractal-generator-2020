@@ -81,7 +81,7 @@ public:
 		return mouse_x;
 	}
 
-	 constexpr double get_y() const
+	constexpr double get_y() const
 	{
 		return mouse_y;
 	}
@@ -143,6 +143,6 @@ public:
 private:
 	double offset_x, offset_y;
 };
-}
+} // namespace fractal
 
 #endif // MOUSE_EVET_H

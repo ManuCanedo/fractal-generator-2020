@@ -54,7 +54,8 @@ void ImGuiLayer::define_appui()
 	ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 
 	static float r_offset = 4.8f, g_offset = 1.0f, b_offset = 3.6f;
-	static bool is_avx = true, is_complex_visualizer = false;
+	static bool is_avx = true;
+	// static bool is_complex_visualizer = false;
 
 	ImGui::Begin("Settings", false, ImGuiWindowFlags_NoResize);
 
@@ -81,7 +82,6 @@ void ImGuiLayer::define_appui()
 		app.set_save(true);
 
 	ImGui::Text("");
-
 	ImGui::Separator();
 	ImGui::Text("Performance");
 	ImGui::Text("%d Iterations", app.get_iters());
@@ -90,11 +90,11 @@ void ImGuiLayer::define_appui()
 	ImGui::Checkbox(" AVX2 ", &is_avx);
 	ImGui::Text("");
 
-	ImGui::Text("Visualising Complexity");
-	ImGui::Checkbox(" nlog(n)", &is_complex_visualizer);
+	// ImGui::Text("Visualising Complexity");
+	// ImGui::Checkbox(" nlog(n)", &is_complex_visualizer);
 
+	// app.set_complex_visualizer(is_complex_visualizer);
 	app.set_avx(is_avx);
-	app.set_complex_visualizer(is_complex_visualizer);
 	ImGui::End();
 }
 

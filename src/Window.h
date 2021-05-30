@@ -71,6 +71,6 @@ public:
 
 	static Window *Get(const WindowProps &props = WindowProps());
 };
-}
+} // namespace fractal
 
 #endif // WINDOW_H
