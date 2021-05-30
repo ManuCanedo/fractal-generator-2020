@@ -15,7 +15,7 @@ public:
 	};
 
 protected:
-	explicit KeyEvent(const KeyCode &key) : keycode(key)
+	explicit KeyEvent(const KeyCode& key) : keycode(key)
 	{
 	}
 
@@ -24,7 +24,7 @@ protected:
 
 class KeyPressedEvent : public KeyEvent {
 public:
-	explicit KeyPressedEvent(const KeyCode &key) : KeyEvent(key)
+	explicit KeyPressedEvent(const KeyCode& key) : KeyEvent(key)
 	{
 	}
 
@@ -48,7 +48,7 @@ public:
 
 class KeyReleasedEvent : public KeyEvent {
 public:
-	explicit KeyReleasedEvent(const KeyCode &key) : KeyEvent(key)
+	explicit KeyReleasedEvent(const KeyCode& key) : KeyEvent(key)
 	{
 	}
 
@@ -72,7 +72,7 @@ public:
 
 class KeyHeldEvent : public KeyEvent {
 public:
-	explicit KeyHeldEvent(const KeyCode &key) : KeyEvent(key)
+	explicit KeyHeldEvent(const KeyCode& key) : KeyEvent(key)
 	{
 	}
 

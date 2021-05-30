@@ -7,16 +7,19 @@ namespace fractal
 {
 class ImGuiLayer {
 public:
-	ImGuiLayer();
+	ImGuiLayer(unsigned int window_width, unsigned int window_height);
 	~ImGuiLayer();
 
 	void on_update();
-	void on_event(Event &e);
+	void on_event(Event& e);
 
 private:
 	void define_appui();
 	void init();
 	void shutdown();
+
+private:
+	unsigned int window_w, window_h;
 };
 } // namespace fractal
 

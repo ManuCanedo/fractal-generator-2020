@@ -11,7 +11,7 @@ class Logger {
 public:
 	static void Init();
 
-	static std::shared_ptr<spdlog::logger> &Get()
+	static std::shared_ptr<spdlog::logger>& Get()
 	{
 		return s_logger;
 	}
@@ -19,7 +19,7 @@ public:
 private:
 	static std::shared_ptr<spdlog::logger> s_logger;
 };
-}
+} // namespace fractal
 
 // LOGGING ENABLED
 #define LOG_TRACE(...) ::fractal::Logger::Get()->trace(__VA_ARGS__)

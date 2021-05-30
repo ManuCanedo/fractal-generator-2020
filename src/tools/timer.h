@@ -33,6 +33,6 @@ public:
 private:
 	const std::chrono::time_point<std::chrono::high_resolution_clock> start_timepoint;
 };
-}
+} // namespace fractal
 
 #endif // TIMER_H

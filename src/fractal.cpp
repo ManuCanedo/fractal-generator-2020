@@ -15,8 +15,8 @@ Fractal::~Fractal()
 	Fractal::wait();
 }
 
-void Fractal::generate_frame(Render type, const int iters, const Colour &rgb, const Point2D &pix_tl,
-			     const Point2D &pix_br, const Point2D &frac_tl, const Point2D &frac_br)
+void Fractal::generate_frame(Render type, const int iters, const Colour& rgb, const Point2D& pix_tl,
+			     const Point2D& pix_br, const Point2D& frac_tl, const Point2D& frac_br)
 {
 	const double scr_section_w = (pix_br.x - pix_tl.x) / futures.size();
 	const double frac_section_w = (frac_br.x - frac_tl.x) / futures.size();
@@ -34,28 +34,34 @@ void Fractal::generate_frame(Render type, const int iters, const Colour &rgb, co
 					   frame.get(), width, iters, rgb, p_tl, p_br, f_tl, f_br);
 			break;
 		case Render::AVX:
-			futures[i] = std::async(std::launch::async, &Fractal::calc_section_avx,
-						this, frame.get(), width, iters, rgb, p_tl, p_br, f_tl, f_br);
+			futures[i] =
+				std::async(std::launch::async, &Fractal::calc_section_avx, this,
+					   frame.get(), width, iters, rgb, p_tl, p_br, f_tl, f_br);
+			break;
+		case Render::CUDA:
+			futures[i] =
+				std::async(std::launch::async, &Fractal::calc_section_cuda, this,
+					   frame.get(), width, iters, rgb, p_tl, p_br, f_tl, f_br);
 			break;
 		}
 	}
 }
 
-void Fractal::wait()
+void Fractal::wait() const
 {
-	std::for_each(futures.begin(), futures.end(), [](auto &fut) { fut.wait(); });
+	std::for_each(futures.cbegin(), futures.cend(), [](const auto& fut) { fut.wait(); });
 }
 
-const char *Fractal::get_frame() const
+const char* Fractal::get_frame() const
 {
 	if (futures.front().valid())
 		return frame.get();
 	return nullptr;
 }
 
-bool Fractal::calc_section(char *data, const int width, const int iters, const Colour rgb,
+bool Fractal::calc_section(char* data, const int width, const int iters, const Colour rgb,
 			   const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
-			   const Point2D frac_br)
+			   const Point2D frac_br) noexcept
 {
 	const double scale_x = (frac_br.x - frac_tl.x) / (pix_br.x - pix_tl.x);
 	const double scale_y = (frac_br.y - frac_tl.y) / (pix_br.y - pix_tl.y);
@@ -65,18 +71,19 @@ bool Fractal::calc_section(char *data, const int width, const int iters, const C
 
 	for (int y = static_cast<int>(pix_tl.y); y < pix_br.y; ++y) {
 		double pos_x = frac_tl.x;
+
 		for (int x = static_cast<int>(pix_tl.x); x < pix_br.x; ++x) {
 			std::complex<double> z = { 0.0, 0.0 };
 			std::complex<double> c = { pos_x, pos_y };
-			int n = 0;
 
+			int n = 0;
 			while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iters) {
 				z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
 				      2 * z.real() * z.imag() + c.imag() };
 				++n;
 			}
 
-			char *pix = &data[3 * (offset_y + x)];
+			char* pix = &data[3 * (offset_y + x)];
 			char r = 0, g = 0, b = 0;
 
 			if (n < iters) {
@@ -92,13 +99,12 @@ bool Fractal::calc_section(char *data, const int width, const int iters, const C
 		pos_y += scale_y;
 		offset_y += width;
 	}
-
 	return true;
 }
 
-bool Fractal::calc_section_avx(char *data, const int width, const int iters, Colour rgb,
+bool Fractal::calc_section_avx(char* data, const int width, const int iters, Colour rgb,
 			       const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
-			       const Point2D frac_br)
+			       const Point2D frac_br) noexcept
 {
 	const double scale_x = (frac_br.x - frac_tl.x) / (pix_br.x - pix_tl.x);
 	const double scale_y = (frac_br.y - frac_tl.y) / (pix_br.y - pix_tl.y);
@@ -162,7 +168,7 @@ bool Fractal::calc_section_avx(char *data, const int width, const int iters, Col
 			/* ----------     ----------     ----------     ---------- */
 			/* ----------        End of Intrinsics          ---------- */
 			/* ----------     ----------     ----------     ---------- */
-			char *pix = &data[3 * (offset_y + x)];
+			char* pix = &data[3 * (offset_y + x)];
 
 			for (int i = 3; i >= 0; --i) {
 				// reg _n contains [pix3 n][pix2 n][pix1 n][pix0 n]
@@ -186,6 +192,19 @@ bool Fractal::calc_section_avx(char *data, const int width, const int iters, Col
 		pos_y += scale_y;
 		offset_y += width;
 	}
+	return true;
+}
+
+bool Fractal::calc_section_cuda(char* data, const int width, const int iters, Colour rgb,
+				const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
+				const Point2D frac_br) noexcept
+{
+	//const double scale_x = (frac_br.x - frac_tl.x) / (pix_br.x - pix_tl.x);
+	//const double scale_y = (frac_br.y - frac_tl.y) / (pix_br.y - pix_tl.y);
+
+	//double pos_y = frac_tl.y;
+	//int offset_y = 0;
+	//int x, y;
 
 	return true;
 }

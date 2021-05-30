@@ -14,23 +14,26 @@ struct Colour {
 
 class Fractal {
 public:
-	enum class Render { BASIC, AVX };
+	enum class Render { BASIC, AVX, CUDA };
 
 	Fractal(const int threads, const int width, const int length);
 	~Fractal();
 
-	void generate_frame(Render type, const int iters, const Colour &rgb, const Point2D &pix_tl,
-			    const Point2D &pix_br, const Point2D &frac_tl, const Point2D &frac_br);
-	void wait();
-	const char *get_frame() const;
+	void generate_frame(Render type, const int iters, const Colour& rgb, const Point2D& pix_tl,
+			    const Point2D& pix_br, const Point2D& frac_tl, const Point2D& frac_br);
+	void wait() const;
+	const char* get_frame() const;
 
 private:
-	bool calc_section(char *mem, const int width, const int iters, const Colour rgb,
+	bool calc_section(char* mem, const int width, const int iters, const Colour rgb,
 			  const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
-			  const Point2D frac_br);
-	bool calc_section_avx(char *mem, const int width, const int iters, const Colour rgb,
+			  const Point2D frac_br) noexcept;
+	bool calc_section_avx(char* mem, const int width, const int iters, const Colour rgb,
 			      const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
-			      const Point2D frac_br);
+			      const Point2D frac_br) noexcept;
+	bool calc_section_cuda(char* mem, const int width, const int iters, const Colour rgb,
+			       const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
+			       const Point2D frac_br) noexcept;
 
 private:
 	const int width;

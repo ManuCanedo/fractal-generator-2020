@@ -1,8 +1,7 @@
 #ifndef ALLOC_TRACKER_H
 #define ALLOC_TRACKER_H
 
-struct AllocationTracker
-{
+struct AllocationTracker {
 	int total_alloc{ 0 };
 	int total_freed{ 0 };
 

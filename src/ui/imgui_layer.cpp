@@ -1,11 +1,12 @@
 #include "fpch.h"
 
-#include "application.h"
 #include "imgui_layer.h"
+#include "application.h"
 
 namespace fractal
 {
-ImGuiLayer::ImGuiLayer()
+ImGuiLayer::ImGuiLayer(unsigned int window_width, unsigned int window_height)
+	: window_w(window_width), window_h(window_height)
 {
 	init();
 }
@@ -22,26 +23,26 @@ void ImGuiLayer::on_update()
 	ImGui::Render();
 }
 
-void ImGuiLayer::on_event(Event &event)
+void ImGuiLayer::on_event(Event& event)
 {
 	EventDispatcher dispatcher(event);
 
-	dispatcher.dispatch<MouseMovedEvent>([this](const MouseMovedEvent &event) {
-		ImGuiIO &io = ImGui::GetIO();
+	dispatcher.dispatch<MouseMovedEvent>([this](const MouseMovedEvent& event) {
+		ImGuiIO& io = ImGui::GetIO();
 		io.MousePos = ImVec2(static_cast<float>(event.get_x()),
 				     static_cast<float>(event.get_y()));
 		return false;
 	});
 
-	dispatcher.dispatch<MouseButtonPressedEvent>([this](const MouseButtonPressedEvent &event) {
-		ImGuiIO &io = ImGui::GetIO();
+	dispatcher.dispatch<MouseButtonPressedEvent>([this](const MouseButtonPressedEvent& event) {
+		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDown[static_cast<int>(event.get_button())] = true;
 		return false;
 	});
 
 	dispatcher.dispatch<MouseButtonReleasedEvent>(
-		[this](const MouseButtonReleasedEvent &event) {
-			ImGuiIO &io = ImGui::GetIO();
+		[this](const MouseButtonReleasedEvent& event) {
+			ImGuiIO& io = ImGui::GetIO();
 			io.MouseDown[static_cast<int>(event.get_button())] = false;
 			return false;
 		});
@@ -49,13 +50,12 @@ void ImGuiLayer::on_event(Event &event)
 
 void ImGuiLayer::define_appui()
 {
-	ImGui::SetNextWindowPos(ImVec2(1410, 20), ImGuiCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(165, 310), ImGuiCond_Once);
-	ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(window_w * 0.895, window_h * 0.01), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(window_w * 0.1, window_h * 0.25), ImGuiCond_Once);
+	ImGui::SetNextWindowCollapsed(false, ImGuiCond_Once);
 
-	static float r_offset = 4.8f, g_offset = 1.0f, b_offset = 3.6f;
 	static bool is_avx = true;
-	// static bool is_complex_visualizer = false;
+	static float r_offset = 0.0f, g_offset = 2.094f, b_offset = 4.188f;
 
 	ImGui::Begin("Settings", false, ImGuiWindowFlags_NoResize);
 
@@ -64,14 +64,14 @@ void ImGuiLayer::define_appui()
 	ImGui::SliderFloat("Green", &g_offset, 0.0f, 6.28f);
 	ImGui::SliderFloat("Blue", &b_offset, 0.0f, 6.28f);
 
-	static Application &app{ Application::Get() };
+	static Application& app{ Application::Get() };
 
 	app.set_roffset(r_offset);
 	app.set_goffset(g_offset);
 	app.set_boffset(b_offset);
 
 	if (ImGui::Button("Default")) {
-		static float r_offset_def = 4.8f, g_offset_def = 1.0f, b_offset_def = 3.6f;
+		static float r_offset_def = 0.0f, g_offset_def = 2.094f, b_offset_def = 4.188f;
 
 		r_offset = r_offset_def;
 		g_offset = g_offset_def;
@@ -90,10 +90,6 @@ void ImGuiLayer::define_appui()
 	ImGui::Checkbox(" AVX2 ", &is_avx);
 	ImGui::Text("");
 
-	// ImGui::Text("Visualising Complexity");
-	// ImGui::Checkbox(" nlog(n)", &is_complex_visualizer);
-
-	// app.set_complex_visualizer(is_complex_visualizer);
 	app.set_avx(is_avx);
 	ImGui::End();
 }
@@ -109,4 +105,4 @@ void ImGuiLayer::shutdown()
 {
 	ImGui::DestroyContext();
 }
-}
+} // namespace fractal

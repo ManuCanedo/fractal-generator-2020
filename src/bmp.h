@@ -7,7 +7,7 @@ namespace fractal
 {
 class Bmp {
 public:
-	Bmp(const int w, const int h);
+	Bmp(uint64_t w, uint64_t h);
 
 	void set_pixel(uint64_t x, uint64_t y, uint8_t r, uint8_t g, uint8_t b);
 	bool write(std::string_view path);
@@ -17,9 +17,9 @@ private:
 	static BmpInfoHeader s_info_header;
 
 private:
-	const unsigned int width, height;
+	const uint64_t width, height;
 	std::unique_ptr<uint8_t[]> pixels;
 };
-}
+} // namespace fractal
 
 #endif // BMP_H

@@ -25,7 +25,7 @@ public:
 	virtual EventType type() const = 0;
 	virtual std::string to_string() const = 0;
 
-	friend std::ostream &operator<<(std::ostream os, const Event &e)
+	friend std::ostream& operator<<(std::ostream os, const Event& e)
 	{
 		return os << e.to_string();
 	}
@@ -36,24 +36,24 @@ protected:
 
 // Dispatcher
 class EventDispatcher {
-	template <typename T> using event_func = std::is_function<bool(T &)>;
+	template <typename T> using event_func = std::is_function<bool(T&)>;
 
 public:
-	explicit EventDispatcher(Event &e) : event(e)
+	explicit EventDispatcher(Event& e) : event(e)
 	{
 	}
 
-	template <typename T, typename F> bool dispatch(const F &func)
+	template <typename T, typename F> bool dispatch(const F& func)
 	{
 		if (event.type() == T::Get()) {
-			event.is_handled = func(static_cast<T &>(event));
+			event.is_handled = func(static_cast<T&>(event));
 			return true;
 		}
 		return false;
 	}
 
 private:
-	Event &event;
+	Event& event;
 };
 } // namespace fractal
 

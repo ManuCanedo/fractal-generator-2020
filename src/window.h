@@ -10,38 +10,38 @@ struct Point2D {
 	{
 	}
 
-	constexpr static Point2D inv_y(const Point2D &other)
+	constexpr static Point2D inv_y(const Point2D& other)
 	{
 		return { other.x, -other.y };
 	}
 
-	constexpr static Point2D inv_x(const Point2D &other)
+	constexpr static Point2D inv_x(const Point2D& other)
 	{
 		return { -other.x, other.y };
 	}
 
-	constexpr Point2D operator+(const Point2D &other) const
+	constexpr Point2D operator+(const Point2D& other) const
 	{
 		return { x + other.x, y + other.y };
 	}
 
-	constexpr Point2D operator-(const Point2D &other) const
+	constexpr Point2D operator-(const Point2D& other) const
 	{
 		return { x - other.x, y - other.y };
 	}
 
-	constexpr Point2D operator/(const Point2D &other) const
+	constexpr Point2D operator/(const Point2D& other) const
 	{
 		return { x / other.y, y / other.y };
 	}
 
-	constexpr void operator+=(const Point2D &other)
+	constexpr void operator+=(const Point2D& other)
 	{
 		x += other.x;
 		y += other.y;
 	}
 
-	constexpr void operator-=(const Point2D &other)
+	constexpr void operator-=(const Point2D& other)
 	{
 		x -= other.x;
 		y -= other.y;
@@ -55,9 +55,9 @@ struct Point2D {
 };
 
 struct WindowProps {
-	std::string name{ "Fractal Explorer" };
-	unsigned int width{ 1600 };
-	unsigned int height{ 900 };
+	std::string name{};
+	unsigned int width{};
+	unsigned int height{};
 };
 
 class Window {
@@ -66,10 +66,10 @@ public:
 
 	virtual unsigned int width() const = 0;
 	virtual unsigned int height() const = 0;
-	virtual void set_event_callback(const std::function<void(Event &)>) = 0;
+	virtual void set_event_callback(const std::function<void(Event&)>) = 0;
 	virtual void set_vsync(const bool enabled) = 0;
 
-	static Window *Get(const WindowProps &props = WindowProps());
+	static Window* Get(const WindowProps& props = WindowProps());
 };
 } // namespace fractal
 

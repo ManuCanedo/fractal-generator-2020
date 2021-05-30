@@ -15,7 +15,7 @@ public:
 	}
 
 protected:
-	explicit MouseButtonEvent(const MouseButtonCode &button) : mbutton_code(button)
+	explicit MouseButtonEvent(const MouseButtonCode& button) : mbutton_code(button)
 	{
 	}
 
@@ -24,7 +24,7 @@ protected:
 
 class MouseButtonPressedEvent : public MouseButtonEvent {
 public:
-	explicit MouseButtonPressedEvent(const MouseButtonCode &code) : MouseButtonEvent(code)
+	explicit MouseButtonPressedEvent(const MouseButtonCode& code) : MouseButtonEvent(code)
 	{
 	}
 
@@ -48,7 +48,7 @@ public:
 
 class MouseButtonReleasedEvent : public MouseButtonEvent {
 public:
-	explicit MouseButtonReleasedEvent(const MouseButtonCode &code) : MouseButtonEvent(code)
+	explicit MouseButtonReleasedEvent(const MouseButtonCode& code) : MouseButtonEvent(code)
 	{
 	}
 

@@ -9,11 +9,11 @@ namespace fractal
 {
 class Application {
 public:
-	Application();
+	Application(unsigned int width = 1920, unsigned int height = 1080, unsigned int sec = 32);
 
 	void run();
 	void update();
-	void on_event(Event &event);
+	void on_event(Event& event);
 
 	void set_roffset(const float val)
 	{
@@ -40,7 +40,7 @@ public:
 		is_screenshot = val;
 	}
 
-	Window &get_window() const
+	Window& get_window() const
 	{
 		return *window;
 	}
@@ -50,7 +50,7 @@ public:
 		return iterations;
 	}
 
-	static Application &Get()
+	static Application& Get()
 	{
 		static Application instance;
 		return instance;
@@ -58,26 +58,22 @@ public:
 
 private:
 	void save();
-	void set_world_scale(const double scale);
-	void scr_to_world(const Point2D &n, Point2D &v) const;
+	void set_world_scale();
+	constexpr Point2D scr_to_world(const Point2D& n) const;
 
 private:
-	const int threads;
+	const int sections;
 	Fractal mandelbrot;
+	Point2D scale, offset;
 	std::unique_ptr<Window> window;
 
-	// Fractal Generation
 	int iterations{ 258 };
-	Colour rgb_offset{ 0.0f, 0.0f, 0.0f };
-	Point2D offset{ 0.0, 0.0 }, start_pan{ 0.0, 0.0 };
-	Point2D mouse_coords{ 0.0, 0.0 }, scale{ 1.0, 1.0 };
-	double scaling_factor{ 1.0f };
+	Colour rgb_offset{ 0.0f, 2.094f, 4.188f };
+	Point2D start_pan{ 0.0, 0.0 }, mouse_coords{ 0.0, 0.0 };
+	float scaling_factor{ 1.0f };
 
-	// Update Flags
-	bool is_avx2{ false },  is_supported_avx2{ false }, is_screenshot{ false };
-	bool is_running{ true }, is_panning{ false }, is_fframe{ true };
-
-	static Application *s_instance;
+	bool is_cuda{ false }, is_avx2{ true }, is_running{ true };
+	bool is_screenshot{ false }, is_panning{ false };
 };
 } // namespace fractal
 

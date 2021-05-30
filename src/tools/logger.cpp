@@ -10,4 +10,4 @@ void Logger::Init()
 	s_logger = spdlog::stdout_color_mt("FractalGenerator");
 	s_logger->set_level(spdlog::level::trace);
 }
-}
+} // namespace fractal

@@ -66,6 +66,6 @@ public:
 private:
 	unsigned int width, height;
 };
-}
+} // namespace fractal
 
 #endif // WINDOW_EVENT_H

@@ -8,7 +8,7 @@ namespace fractal
 {
 class WindowsWindow : public Window {
 public:
-	explicit WindowsWindow(const WindowProps &props);
+	explicit WindowsWindow(const WindowProps& props);
 	~WindowsWindow();
 
 	void on_update() override;
@@ -23,23 +23,23 @@ public:
 		return data.height;
 	}
 
-	void set_event_callback(const std::function<void(Event &)>) override;
+	void set_event_callback(const std::function<void(Event&)>) override;
 	void set_vsync(const bool enabled) override;
 
 private:
-	void init(const WindowProps &props);
+	void init(const WindowProps& props);
 	void shutdown();
 
 private:
-	GLFWwindow *window;
+	GLFWwindow* window;
 	std::unique_ptr<ImGuiLayer> imgui_layer;
 
 	struct WindowData {
-		std::string name{ "" };
+		std::string name{};
 		unsigned int width{}, height{};
-		std::function<void(Event &)> func_eventcallback;
+		std::function<void(Event&)> func_eventcallback;
 	} data;
 };
-}
+} // namespace fractal
 
 #endif // WIN_WINDOW_H
