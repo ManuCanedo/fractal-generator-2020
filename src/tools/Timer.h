@@ -1,24 +1,38 @@
-#pragma once
+#ifndef TIMER_H
+#define TIMER_H
 
-namespace Fractal
+namespace fractal
 {
-	class Timer
+class Timer {
+public:
+	Timer() : start_timepoint(std::chrono::high_resolution_clock::now())
 	{
-	public:
-		Timer() : m_StartTimepoint(std::chrono::high_resolution_clock::now()) {}
-		~Timer() { Stop(); }
+	}
 
-		void Stop()
-		{
-			const auto endTimepoint{ std::chrono::high_resolution_clock::now() };
-			const auto start{ std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count() };
-			const auto end{ std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count() };
+	~Timer()
+	{
+		stop();
+	}
 
-			const double ms{ (end - start) * 0.001 };
-			LOG_WARN("Function execution time: {0}(ms)", ms);
-		}
+	void stop()
+	{
+		const auto end_timepoint = std::chrono::high_resolution_clock::now();
+		const auto start =
+			std::chrono::time_point_cast<std::chrono::microseconds>(start_timepoint)
+				.time_since_epoch()
+				.count();
+		const auto end =
+			std::chrono::time_point_cast<std::chrono::microseconds>(end_timepoint)
+				.time_since_epoch()
+				.count();
 
-	private:
-		const std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimepoint;
-	};
+		const double ms = (end - start) * 0.001;
+		LOG_WARN("Function execution time: {0}(ms)", ms);
+	}
+
+private:
+	const std::chrono::time_point<std::chrono::high_resolution_clock> start_timepoint;
+};
 }
+
+#endif // TIMER_H
