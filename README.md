@@ -56,3 +56,7 @@ Fractal application progress:
 ## Stay in touch
 
 + Linkedin - https://www.linkedin.com/in/manuel-tabares/
+
+<br><br><hr>
+![explorable-fractal-world](media/explorable-fractal-world-ai.jpg?raw=true "'Explorable Fractal World', generated with VQGAN+CLIP")
+*'Explorable Fractal World' - generated with VQGAN+CLIP*
