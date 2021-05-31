@@ -6,6 +6,7 @@ The Mandelbrot fractal is a mathematically generated psychedelic image that rese
 A user interface gives you the ability to modify the fractal colors and apply configure the fractal generation method.
 
 ![Fractal](screenshots/Fractal_Screenshot_User2.jpg)
+*'Fractal Zoom' - generated in the application*
 
 ## Getting Started
 
