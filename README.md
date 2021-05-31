@@ -1,8 +1,9 @@
-# A real-time fractal world explorer
+# Fractal Generator
+## A real-time fractal world explorer
 
-The Mandelbrot fractal is a psichodelic mathematically-generated image that is self-like through different scales. Zoom in and out on the fractal to explore it! You can gradually apply a maximum zoom of around 1: 10^15 discovering countless fractal underworlds in the process. 
+The Mandelbrot fractal is a mathematically generated psychedelic image that resembles itself across different scales. Zoom in and out on the fractal to explore it! You can gradually apply a maximum zoom of around 1:10^15 discovering countless fractal underworlds in the process.
 
-An UI offers you the possibility to modify the fractal colours and apply other performance settings. In addition, a fixed preset allows you to visuallise the Time Complexity of the Binary Search algorithm and compare it with the corresponding complexity of the fractal.
+A user interface gives you the ability to modify the fractal colors and apply configure the fractal generation method.
 
 ![Fractal](screenshots/Fractal_Screenshot_User2.jpg)
 
@@ -16,7 +17,7 @@ You can either clone the repository and generate the project with GenerateProjec
 *SPACEBAR* key ----- take a screenshot.  
 *ESC* key ----- quit the application.<br/>
 
-Expand the *Settings* interface to play around with the colouring and other configurations.<br/>
+Use *Settings* interface to play around with the colouring and other configurations.<br/>
 
 [Executable](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
