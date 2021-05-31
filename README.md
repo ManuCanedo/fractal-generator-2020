@@ -60,4 +60,4 @@ Fractal application progress:
 
 <br><br><hr>
 ![interstellar](media/interstellar-ai.jpg?raw=true "'Interstellar', generated with VQGAN+CLIP")
-*'Interstellar' - generated with VQGAN+CLIP*
+<p align="center">Interstellar - generated with VQGAN+CLIP</p>
