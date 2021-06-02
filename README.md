@@ -5,8 +5,10 @@ The Mandelbrot fractal is a mathematically generated psychedelic image that rese
 
 A user interface gives you the ability to modify the fractal colors and apply configure the fractal generation method.
 
-![Fractal](screenshots/Fractal_Screenshot_User2.jpg)
-<p align="center">Fractal Zoom - generated in the application</p>
+<p align="center">
+  <br> <img width="840" height="480" src="screenshots/Fractal_Screenshot_User2.jpg">
+  <br> Fractal Zoom - generated in the application
+</p>
 
 ## Getting Started
 
@@ -58,6 +60,8 @@ Fractal application progress:
 
 + Linkedin - https://www.linkedin.com/in/manuel-tabares/
 
-<br><br><hr>
-![interstellar](media/interstellar-ai.jpg?raw=true "'Interstellar', generated with VQGAN+CLIP")
-<p align="center">Interstellar - generated with VQGAN+CLIP</p>
+<br><hr>
+<p align="center">
+  <br> <img width="840" height="480" src="media/interstellar-ai.jpg.jpg">
+  <br> Interstellar - AI generated (vqgan+clip)
+</p>
