@@ -62,6 +62,6 @@ Fractal application progress:
 
 <br><hr>
 <p align="center">
-  <br> <img width="840" height="480" src="media/interstellar-ai.jpg.jpg">
+  <br> <img width="840" height="480" src="media/interstellar-ai.jpg">
   <br> Interstellar - AI generated (vqgan+clip)
 </p>
