@@ -12,6 +12,7 @@ A user interface gives you the ability to modify the fractal colors and apply co
 
 ## Getting Started
 
+<p align="justify">
 You can either clone the repository and generate the project with GenerateProject.bat or directly access the lastest binaries.<br/>
 
 *MOUSE WHEEL BUTTON* (click and drag) ----- move around the Fractal.  
@@ -25,9 +26,11 @@ Use *Settings* interface to play around with the colouring and other configurati
 [Executable](https://github.com/ManuCanedo/fractal-generator/tree/master/bin)  
 [Source Code](https://github.com/ManuCanedo/fractal-generator/tree/master/src)   
 [Screenshots](https://github.com/ManuCanedo/fractal-generator/tree/master/screenshots) 
+</p>
 
 ## Development Checklist
 
+<p align="justify">
 Engine progress:
 + **Application Engine** set up
 + (Dev Tool) Logger implemented  
@@ -44,7 +47,6 @@ Engine progress:
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
 + (Dev Tool) CPU SIMD Features inspector implemented
 
-
 Fractal application progress:
 + Bitmap Images Generation
 + **Mandelbrot Fractal Generation**
@@ -54,7 +56,7 @@ Fractal application progress:
 + Real Time Sinusoidal Colouring
 + **Screenshots**
 + **UI** and fractal configuration in real time
-
+</p>
 
 ## Stay in touch
 
