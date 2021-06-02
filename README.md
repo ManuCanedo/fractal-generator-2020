@@ -30,7 +30,6 @@ Use *Settings* interface to play around with the colouring and other configurati
 
 ## Development Checklist
 
-<p align="justify">
 Engine progress:
 + **Application Engine** set up
 + (Dev Tool) Logger implemented  
@@ -56,7 +55,6 @@ Fractal application progress:
 + Real Time Sinusoidal Colouring
 + **Screenshots**
 + **UI** and fractal configuration in real time
-</p>
 
 ## Stay in touch
 
