@@ -45,8 +45,8 @@ Engine progress:
 + **ImGui** Layer Abstraction and platform specific implementation
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
 + (Dev Tool) CPU SIMD Features inspector implemented
-
-<br>
+  
+  
 Fractal application progress:
 + Bitmap Images Generation
 + **Mandelbrot Fractal Generation**
