@@ -46,6 +46,7 @@ Engine progress:
 + Fractal Generation using **AVX2** CPU vector extensions (Compiler Intrinsics)
 + (Dev Tool) CPU SIMD Features inspector implemented
 
+
 Fractal application progress:
 + Bitmap Images Generation
 + **Mandelbrot Fractal Generation**
