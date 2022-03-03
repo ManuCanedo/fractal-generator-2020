@@ -109,6 +109,52 @@ bool Fractal::calc_section_avx(char* data, const int width, const int iters, Col
 	return true;
 }
 ```
+Regular algorithm to generate a section of the fractal. AVX2 disabled.
+
+```
+bool Fractal::calc_section(char* data, const int width, const int iters, const Colour rgb,
+			   const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
+			   const Point2D frac_br) noexcept
+{
+	const double scale_x = (frac_br.x - frac_tl.x) / (pix_br.x - pix_tl.x);
+	const double scale_y = (frac_br.y - frac_tl.y) / (pix_br.y - pix_tl.y);
+
+	double pos_y = frac_tl.y;
+	int offset_y = 0;
+
+	for (int y = static_cast<int>(pix_tl.y); y < pix_br.y; ++y) {
+		double pos_x = frac_tl.x;
+
+		for (int x = static_cast<int>(pix_tl.x); x < pix_br.x; ++x) {
+			std::complex<double> z = { 0.0, 0.0 };
+			std::complex<double> c = { pos_x, pos_y };
+
+			int n = 0;
+			while (z.real() * z.real() + z.imag() * z.imag() < 4 && n < iters) {
+				z = { z.real() * z.real() - z.imag() * z.imag() + c.real(),
+				      2 * z.real() * z.imag() + c.imag() };
+				++n;
+			}
+
+			char* pix = &data[3 * (offset_y + x)];
+			char r = 0, g = 0, b = 0;
+
+			if (n < iters) {
+				r = static_cast<char>(256 * (0.5 * sin(0.1f * n + rgb.r) + 0.5));
+				g = static_cast<char>(256 * (0.2 * sin(0.1f * n + rgb.g) + 0.5));
+				b = static_cast<char>(256 * (0.5 * sin(0.1f * n + rgb.b) + 0.5));
+			}
+			pix[0] = r;
+			pix[1] = g;
+			pix[2] = b;
+			pos_x += scale_x;
+		}
+		pos_y += scale_y;
+		offset_y += width;
+	}
+	return true;
+}
+```
 
 ## Getting Started
 
