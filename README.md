@@ -15,7 +15,7 @@ A user interface gives you the ability to modify the fractal colors and apply co
 
 Algorithm to calculate a section of the fractal. Using intrinsics to utilize AVX2.
 
-``
+```
 bool Fractal::calc_section_avx(char* data, const int width, const int iters, Colour rgb,
 			       const Point2D pix_tl, const Point2D pix_br, const Point2D frac_tl,
 			       const Point2D frac_br) noexcept
@@ -108,7 +108,7 @@ bool Fractal::calc_section_avx(char* data, const int width, const int iters, Col
 	}
 	return true;
 }
-``
+```
 
 ## Getting Started
 
